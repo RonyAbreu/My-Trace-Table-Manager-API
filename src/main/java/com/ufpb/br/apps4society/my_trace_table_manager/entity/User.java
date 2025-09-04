@@ -34,14 +34,14 @@ public class User implements Serializable, UserDetails {
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "creator")
     List<Theme> themes = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "creator")
+    @OneToMany(mappedBy = "creator")
     List<TraceTable> traceTables = new ArrayList<>();
 
     public User(UserRequest userRequest) {
         this.name = userRequest.name();
         this.email = userRequest.email();
         this.password = userRequest.password();
-        this.role = Role.USER;
+        this.role = userRequest.role();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class User implements Serializable, UserDetails {
     }
 
     public UserResponse entityToResponse(){
-        return new UserResponse(id,name,email);
+        return new UserResponse(id,name,email,role.getRole());
     }
 
     public boolean userNotHavePermission(User user){

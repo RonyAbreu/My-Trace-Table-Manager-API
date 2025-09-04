@@ -8,13 +8,15 @@ import java.util.List;
 
 public record TraceTableRequest(
         @NotBlank(message = "Campo exerciseName não pode ser vazio")
-        @Size(min = 3, max = 30, message = "Número de caracteres inválido")
+        @Size(min = 1, max = 30, message = "Número de caracteres inválido")
          String exerciseName,
          @NotNull(message = "O campo header não pode ser nulo")
          List<String> header,
         @NotNull(message = "O campo shownTraceTable não pode ser nulo")
          List<List<String>> shownTraceTable,
         @NotNull(message = "O campo expectedTraceTable não pode ser nulo")
-         List<List<String>>  expectedTraceTable
+         List<List<String>>  expectedTraceTable,
+        @NotNull(message = "O campo type não pode ser nulo")
+        List<List<String>> typeTable
 ) {
 }

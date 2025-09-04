@@ -1,6 +1,7 @@
 package com.ufpb.br.apps4society.my_trace_table_manager.service;
 
 import com.ufpb.br.apps4society.my_trace_table_manager.dto.user.*;
+import com.ufpb.br.apps4society.my_trace_table_manager.entity.TraceTable;
 import com.ufpb.br.apps4society.my_trace_table_manager.entity.User;
 import com.ufpb.br.apps4society.my_trace_table_manager.entity.role.Role;
 import com.ufpb.br.apps4society.my_trace_table_manager.repository.UserRepository;
@@ -9,6 +10,7 @@ import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.Invalid
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.UserAlreadyExistsException;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.UserNotFoundException;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.UserNotHavePermissionException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,14 +26,15 @@ public class UserService {
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
     private TokenProvider tokenProvider;
+    private TraceTableService traceTableService;
 
     @Autowired
-    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,
-                       PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, TraceTableService traceTableService) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
+        this.traceTableService = traceTableService;
     }
 
     public UserResponse registerUser(UserRequest userRequest) throws UserAlreadyExistsException {
@@ -53,7 +56,8 @@ public class UserService {
         UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(userLogin.email(), userLogin.password());
         Authentication auth = authenticationManager.authenticate(user);
         String token = tokenProvider.generateToken((User) auth.getPrincipal());
-        return new TokenResponse(token);
+        long expiresIn = tokenProvider.getExpirationTimeInSeconds();
+        return new TokenResponse(token, expiresIn);
     }
 
     public UserResponse findUser(String token) {
@@ -68,6 +72,10 @@ public class UserService {
 
         if (loggedUser.userNotHavePermission(removeUser)){
             throw new UserNotHavePermissionException("Você não tem permissão para remover esse usuário");
+        }
+
+        for (TraceTable traceTable : removeUser.getTraceTables()) {
+            traceTableService.removeTraceTable(id, traceTable.getId());
         }
 
         userRepository.delete(removeUser);
@@ -103,20 +111,21 @@ public class UserService {
 
     private void updateData(User user, UserUpdate userUpdate) {
         user.setName(userUpdate.name());
+        user.setEmail(userUpdate.email());
+        user.setRole(userUpdate.role());
+        if (userUpdate.password() != null && !userUpdate.password().isBlank()){
+            user.setPassword(passwordEncoder.encode(userUpdate.password()));
+        }
     }
 
     public User findUserByToken(String token) {
         if (token != null && token.startsWith("Bearer ")){
             token = token.substring("Bearer ".length());
         }
+        String userId = tokenProvider.getSubjectByToken(token);
 
-        String email = tokenProvider.getSubjectByToken(token);
-
-        User user = (User) userRepository.findByEmail(email);
-
-        if (user == null){
-            throw new InvalidUserException("Usuário inválido, pode ter sido removido do BD e utilizado o token");
-        }
+        User user = (User) userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new InvalidUserException("Usuário inválido, pode ter sido removido do BD e utilizado o token"));
 
         return user;
     }
