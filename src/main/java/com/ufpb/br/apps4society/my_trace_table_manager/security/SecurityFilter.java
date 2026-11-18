@@ -57,7 +57,6 @@ public class SecurityFilter extends OncePerRequestFilter {
             (method.equals("POST") && path.startsWith("/v1/verification/")) ||
             (method.equals("GET") && path.equals("/v1/user/all")) ||
             (method.equals("POST") && path.equals("/v1/user/login")) ||
-            (method.equals("GET") && path.startsWith("/v1/theme")) ||
             (method.equals("POST") && path.startsWith("/v1/trace/check")) ||
             (method.equals("GET") && path.startsWith("/v1/trace")) ||
             path.startsWith("/v3/api-docs") ||

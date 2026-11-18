@@ -24,6 +24,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,14 +56,16 @@ public class TraceTableController {
                         @RequestPart("traceTableRequest") String traceTableRequestJson,
                         @RequestPart("image") MultipartFile image,
                         @PathVariable Long userId,
-                        @RequestParam List<Long> themesIds) throws IOException {
+                        @RequestParam List<Long> themesIds,
+                        @AuthenticationPrincipal User user
+        ) throws IOException, UserNotHavePermissionException {
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 TraceTableRequest traceTableRequest = objectMapper.readValue(traceTableRequestJson,
                                 TraceTableRequest.class);
 
                 return ResponseEntity.status(201)
-                                .body(traceTableService.insertTraceTable(traceTableRequest, image, userId, themesIds));
+                                .body(traceTableService.insertTraceTable(traceTableRequest, image, userId, themesIds, user));
         }
 
         @Operation(tags = "Trace", summary = "Find Trace Table By ID", responses = {
@@ -122,8 +125,9 @@ public class TraceTableController {
         @DeleteMapping("/{traceId}/{userId}")
         public ResponseEntity<Void> removeTraceTable(
                         @PathVariable Long traceId,
-                        @PathVariable Long userId) throws UserNotHavePermissionException {
-                traceTableService.removeTraceTable(userId, traceId);
+                        @PathVariable Long userId,
+                        @AuthenticationPrincipal User loggedUSer) throws UserNotHavePermissionException {
+                traceTableService.removeTraceTable(userId, traceId, loggedUSer);
                 return ResponseEntity.noContent().build();
         }
 
@@ -139,9 +143,10 @@ public class TraceTableController {
                         @RequestBody @Valid TraceTableRequest traceTableRequest,
                         @PathVariable Long traceId,
                         @PathVariable Long userId,
-                        @RequestParam List<Long> themesIds) throws UserNotHavePermissionException {
+                        @RequestParam List<Long> themesIds,
+                        @AuthenticationPrincipal User loggedUser) throws UserNotHavePermissionException {
                 return ResponseEntity
-                                .ok(traceTableService.updateTraceTable(traceTableRequest, traceId, userId, themesIds));
+                                .ok(traceTableService.updateTraceTable(traceTableRequest, traceId, userId, themesIds, loggedUser));
         }
 
         @Operation(tags = "Trace", summary = "Check User Answer", responses = {

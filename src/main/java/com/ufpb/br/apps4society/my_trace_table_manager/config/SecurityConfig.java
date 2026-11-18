@@ -40,12 +40,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers("/", "/swagger-resources/**", "/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**", "/h2/**").permitAll();
-                    request.requestMatchers(HttpMethod.POST,"/v1/user/register").hasAuthority("ADMIN");
+                    request.requestMatchers(HttpMethod.POST,"/v1/user/register").hasRole("ADMIN");
                     request.requestMatchers(HttpMethod.POST,"/v1/user/regAlun").permitAll();
                     request.requestMatchers(HttpMethod.POST, "/v1/user/login").permitAll();
                     request.requestMatchers(HttpMethod.POST, "/v1/verification/**").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/v1/user/all").permitAll();
-                    request.requestMatchers(HttpMethod.GET, "/v1/theme/**").permitAll();
+                    request.requestMatchers(HttpMethod.GET, "/v1/theme/**").authenticated();
                     request.requestMatchers(HttpMethod.POST, "/v1/trace/check/**").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/v1/trace/**").permitAll();
                     request.anyRequest().authenticated();

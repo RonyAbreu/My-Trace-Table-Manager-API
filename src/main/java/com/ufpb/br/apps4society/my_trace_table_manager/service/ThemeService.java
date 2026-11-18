@@ -9,6 +9,7 @@ import com.ufpb.br.apps4society.my_trace_table_manager.repository.ThemeRepositor
 import com.ufpb.br.apps4society.my_trace_table_manager.repository.TraceTableRepository;
 import com.ufpb.br.apps4society.my_trace_table_manager.repository.UserRepository;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.ThemeNotFoundException;
+import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.TraceNotFoundException;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.UserNotFoundException;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.UserNotHavePermissionException;
 
@@ -34,9 +35,13 @@ public class ThemeService {
         this.minioService = minioService;
     }
 
-    public ThemeResponse insertTheme(ThemeRequest themeRequest, Long userId) {
+    public ThemeResponse insertTheme(ThemeRequest themeRequest, Long userId, Long loggedUserId) throws UserNotHavePermissionException {
         User creator = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
+
+        if (!userId.equals(loggedUserId)) {
+            throw new UserNotHavePermissionException("Não é possível criar um tema para outro usuário");
+        }
 
         Theme theme = new Theme(themeRequest, creator);
 
@@ -75,19 +80,22 @@ public class ThemeService {
     }
 
     public Page<ThemeResponse> findAllThemesByTraceTable(Pageable pageable, Long traceTableId) {
+        if (traceTableRepository.findById(traceTableId).isEmpty()) {
+            throw new TraceNotFoundException("Trace Table não encontrado com id %s.".formatted(traceTableId));
+        }
         Page<Theme> themes = themeRepository.findByTraceTables_Id(pageable, traceTableId);
         return themes.map(Theme::entityToResponse);
     }
 
     @Transactional
-    public void removeTheme(Long themeId, Long userId) throws UserNotHavePermissionException {
+    public void removeTheme(Long themeId, Long userId, User loggedUSer) throws UserNotHavePermissionException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ThemeNotFoundException("Tema não encontrado!"));
 
-        if (user.userNotHavePermission(theme.getCreator())) {
+        if (loggedUSer.userHavePermission(theme.getCreator())) {
             throw new UserNotHavePermissionException("Esse usuário não tem permissão para remover esse tema!");
         }
 
@@ -111,7 +119,7 @@ public class ThemeService {
         }
     }
 
-    public ThemeResponse updateTheme(ThemeRequest newTheme, Long themeId, Long userId)
+    public ThemeResponse updateTheme(ThemeRequest newTheme, Long themeId, Long userId, User loggedUSer)
             throws UserNotHavePermissionException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
@@ -119,7 +127,7 @@ public class ThemeService {
         Theme theme = themeRepository.findById(themeId)
                 .orElseThrow(() -> new ThemeNotFoundException("Tema não encontrado!"));
 
-        if (user.userNotHavePermission(theme.getCreator())) {
+        if (loggedUSer.userHavePermission(theme.getCreator())) {
             throw new UserNotHavePermissionException("Esse usuário não tem permissão para remover esse tema!");
         }
 

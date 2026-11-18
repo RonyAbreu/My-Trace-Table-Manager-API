@@ -2,6 +2,7 @@ package com.ufpb.br.apps4society.my_trace_table_manager.controller;
 
 import com.ufpb.br.apps4society.my_trace_table_manager.dto.theme.ThemeRequest;
 import com.ufpb.br.apps4society.my_trace_table_manager.dto.theme.ThemeResponse;
+import com.ufpb.br.apps4society.my_trace_table_manager.entity.User;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.ThemeService;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.UserNotHavePermissionException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,8 +42,10 @@ public class ThemeController {
         @PostMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<ThemeResponse> insertTheme(
                         @RequestBody @Valid ThemeRequest themeRequest,
-                        @PathVariable Long userId) {
-                return ResponseEntity.status(201).body(themeService.insertTheme(themeRequest, userId));
+                        @PathVariable Long userId,
+                        @AuthenticationPrincipal User user
+        ) throws UserNotHavePermissionException {
+                return ResponseEntity.status(201).body(themeService.insertTheme(themeRequest, userId, user.getId()));
         }
 
         @Operation(tags = "Theme", summary = "Find All Themes", responses = {
@@ -106,8 +110,10 @@ public class ThemeController {
         @DeleteMapping("/{themeId}/{userId}")
         public ResponseEntity<Void> removeTheme(
                         @PathVariable Long themeId,
-                        @PathVariable Long userId) throws UserNotHavePermissionException {
-                themeService.removeTheme(themeId, userId);
+                        @PathVariable Long userId,
+                        @AuthenticationPrincipal User loggedUser
+        ) throws UserNotHavePermissionException {
+                themeService.removeTheme(themeId, userId, loggedUser);
                 return ResponseEntity.noContent().build();
         }
 
@@ -122,7 +128,8 @@ public class ThemeController {
         public ResponseEntity<ThemeResponse> updateTheme(
                         @RequestBody @Valid ThemeRequest themeRequest,
                         @PathVariable Long themeId,
-                        @PathVariable Long userId) throws UserNotHavePermissionException {
-                return ResponseEntity.ok(themeService.updateTheme(themeRequest, themeId, userId));
+                        @PathVariable Long userId,
+                        @AuthenticationPrincipal User loggedUser) throws UserNotHavePermissionException {
+                return ResponseEntity.ok(themeService.updateTheme(themeRequest, themeId, userId, loggedUser));
         }
 }

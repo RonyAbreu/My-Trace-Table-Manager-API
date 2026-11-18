@@ -90,12 +90,12 @@ public class UserService {
         User removeUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado!"));
 
-        if (loggedUser.userNotHavePermission(removeUser)){
+        if (loggedUser.userHavePermission(removeUser)){
             throw new UserNotHavePermissionException("Você não tem permissão para remover esse usuário");
         }
 
         for (TraceTable traceTable : removeUser.getTraceTables()) {
-            traceTableService.removeTraceTable(id, traceTable.getId());
+            traceTableService.removeTraceTable(id, traceTable.getId(), loggedUser);
         }
 
         userRepository.delete(removeUser);
@@ -119,20 +119,22 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado!"));
 
-        if (loggedUser.userNotHavePermission(user)){
+        if (loggedUser.userHavePermission(user)){
             throw new UserNotHavePermissionException("Você não tem permissão para atualizar esse usuário");
         }
 
-        updateData(user, userUpdate);
+        updateData(user, userUpdate, loggedUser);
         userRepository.save(user);
 
         return user.entityToResponse();
     }
 
-    private void updateData(User user, UserUpdate userUpdate) {
+    private void updateData(User user, UserUpdate userUpdate, User loggedUser) {
         user.setName(userUpdate.name());
         user.setEmail(userUpdate.email());
-        user.setRole(userUpdate.role());
+        if (loggedUser.getRole() == Role.ADMIN) {
+            user.setRole(userUpdate.role());
+        }
         if (userUpdate.password() != null && !userUpdate.password().isBlank()){
             user.setPassword(passwordEncoder.encode(userUpdate.password()));
         }
@@ -156,7 +158,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado!"));
 
-        if (loggedUser.userNotHavePermission(user)){
+        if (loggedUser.userHavePermission(user)){
             throw new UserNotHavePermissionException("Você não tem permissão para realizar essa funcionalidade");
         }
 

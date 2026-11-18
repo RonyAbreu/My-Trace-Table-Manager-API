@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,9 @@ public class TraceTableService {
             TraceTableRequest traceTableRequest,
             MultipartFile image,
             Long userId,
-            List<Long> themesIds) throws IOException {
+            List<Long> themesIds,
+            User loggedUser
+    ) throws UserNotHavePermissionException {
 
         validateTraceTableRequest(traceTableRequest);
 
@@ -62,6 +63,10 @@ public class TraceTableService {
         List<Theme> themes = themeRepository.findAllById(themesIds);
         if (themes.isEmpty()) {
             throw new ThemeNotFoundException("Nenhum tema encontrado para os IDs fornecidos");
+        }
+
+        if (!userId.equals(loggedUser.getId())) {
+            throw new UserNotHavePermissionException("Não é possível criar um tema para outro usuário");
         }
 
         String imgName = handleImageUpload(image);
@@ -121,14 +126,14 @@ public class TraceTableService {
     }
 
     @Transactional
-    public void removeTraceTable(Long userId, Long traceId) throws UserNotHavePermissionException {
+    public void removeTraceTable(Long userId, Long traceId, User loggedUser) throws UserNotHavePermissionException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
         TraceTable traceTable = traceTableRepository.findById(traceId)
                 .orElseThrow(() -> new TraceNotFoundException("Exercício não encontrado"));
 
-        if (user.userNotHavePermission(traceTable.getCreator())) {
+        if (loggedUser.userHavePermission(traceTable.getCreator())) {
             throw new UserNotHavePermissionException("Você não tem permissão de remover este exercício!");
         }
 
@@ -144,7 +149,7 @@ public class TraceTableService {
     }
 
     public TraceTableResponse updateTraceTable(TraceTableRequest newTraceTable, Long traceId, Long userId,
-            List<Long> themesIds)
+            List<Long> themesIds, User loggedUser)
             throws UserNotHavePermissionException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
@@ -152,7 +157,7 @@ public class TraceTableService {
         TraceTable traceTable = traceTableRepository.findById(traceId)
                 .orElseThrow(() -> new TraceNotFoundException("Exercício não encontrado"));
 
-        if (user.userNotHavePermission(traceTable.getCreator())) {
+        if (loggedUser.userHavePermission(traceTable.getCreator())) {
             throw new UserNotHavePermissionException("Você não tem permissão de remover este exercício!");
         }
 
@@ -248,7 +253,11 @@ public class TraceTableService {
 
     public void submitAnswer(List<List<String>> userTraceTable, Long traceId, Long userId) {
         User student = userRepository.findById(userId).orElseThrow();
-        TraceTable traceTable = traceTableRepository.findById(traceId).orElseThrow();
+
+        if (traceTableRepository.findById(traceId).isEmpty()) {
+            throw new TraceNotFoundException("Trace Table inexistente para esse id.");
+        }
+        TraceTable traceTable = traceTableRepository.findById(traceId).get();
 
         Answer answer = new Answer();
         answer.setStudent(student);
@@ -266,6 +275,10 @@ public class TraceTableService {
             String studentName
     ) {
         List<Answer> answers;
+
+        if (traceTableRepository.findById(traceId).isEmpty()) {
+            throw new TraceNotFoundException("Trace Table inexistente para esse id.");
+        }
 
         if (startDate != null && endDate != null && studentName != null && !studentName.isEmpty()) {
             answers = answerRepository.findByTraceTableIdAndCreatedAtBetweenAndStudentNameIgnoreCase(traceId, startDate, endDate, studentName);
