@@ -462,9 +462,9 @@ public class TraceTableApiTests {
                     .header("Authorization", "Bearer " + ApiTestSupport.obterTokenAdmin())
                     .body(TRACE_JSON.replace("Exercício de teste", "Exercício atualizado"))
                     .queryParam("themesIds", trace.getThemes().get(0).getId())
-                    .when()
+            .when()
                     .put(BASE_PATH + "/{traceId}/{userId}", trace.getId(), trace.getCreator().getId())
-                    .then()
+            .then()
                     .statusCode(200)
                     .body("exerciseName", equalTo("Exercício atualizado"));
         }
@@ -478,9 +478,9 @@ public class TraceTableApiTests {
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + ApiTestSupport.obterTokenAdmin())
                     .body(TRACE_JSON)
-                    .when()
+            .when()
                     .put(BASE_PATH + "/{traceId}/{userId}", trace.getId(), trace.getCreator().getId())
-                    .then()
+            .then()
                     .statusCode(anyOf(is(400), is(403)));
         }
 
@@ -494,9 +494,9 @@ public class TraceTableApiTests {
                     .header("Authorization", "Bearer " + ApiTestSupport.obterTokenAdmin())
                     .body(TRACE_JSON)
                     .queryParam("themesIds", 999999L)
-                    .when()
+            .when()
                     .put(BASE_PATH + "/{traceId}/{userId}", trace.getId(), trace.getCreator().getId())
-                    .then()
+            .then()
                     .statusCode(404);
         }
 
@@ -759,7 +759,7 @@ public class TraceTableApiTests {
 
         @Test
         @DisplayName("CT-TRT-045: Submeter resposta para trace table inexistente")
-        void CT_TRT_045_submitAnswerError_shouldReturnServerErrorForUnknownTrace() {
+        void CT_TRT_045_submitAnswerError_shouldReturn404ForUnknownTrace() {
             User student = testDataSupport.prepararUsuario("trt-student-048@test.com");
 
             given()
@@ -970,7 +970,7 @@ public class TraceTableApiTests {
 
         @Test
         @DisplayName("CT-TRT-055: Consultar respostas de trace table inexistente")
-        void CT_TRT_055_getAnswersByExercise_shouldReturnEmptyForUnknownTrace() {
+        void CT_TRT_055_getAnswersByExercise_shouldReturn404() {
             given()
                     .accept(ContentType.JSON)
             .when()

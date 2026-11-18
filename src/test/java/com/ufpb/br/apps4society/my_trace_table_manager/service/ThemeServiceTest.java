@@ -56,7 +56,7 @@ public class ThemeServiceTest {
     }
 
     @Test
-    void insertThemeSuccess() {
+    void insertThemeSuccess() throws UserNotHavePermissionException {
         Long userId = 1L;
         ThemeRequest themeRequest = new ThemeRequest("Tema de Teste");
 
@@ -71,7 +71,7 @@ public class ThemeServiceTest {
         ArgumentCaptor<Theme> themeCaptor = ArgumentCaptor.forClass(Theme.class);
         doAnswer(invocation -> invocation.getArgument(0)).when(themeRepository).save(themeCaptor.capture());
 
-        ThemeResponse result = themeService.insertTheme(themeRequest, userId);
+        ThemeResponse result = themeService.insertTheme(themeRequest, userId, userId);
 
         Theme savedTheme = themeCaptor.getValue();
         assertNotNull(result);
@@ -91,7 +91,7 @@ public class ThemeServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         UserNotFoundException exception = assertThrows(UserNotFoundException.class,
-                () -> themeService.insertTheme(mockRequest, userId));
+                () -> themeService.insertTheme(mockRequest, userId, userId));
 
         assertEquals("Usuário não encontrado", exception.getMessage());
 
@@ -215,7 +215,7 @@ public class ThemeServiceTest {
         when(mockTheme.getId()).thenReturn(themeId);
         when(mockTheme.getCreator()).thenReturn(mockCreator);
 
-        when(mockUser.userNotHavePermission(mockCreator)).thenReturn(false);
+        when(mockUser.userHavePermission(mockCreator)).thenReturn(false);
 
         List<Theme> themeList = new ArrayList<>();
         themeList.add(mockTheme);
@@ -232,12 +232,12 @@ public class ThemeServiceTest {
         doNothing().when(minioService).deleteObject(any());
         doNothing().when(themeRepository).delete(mockTheme);
 
-        themeService.removeTheme(themeId, userId);
+        themeService.removeTheme(themeId, userId, mockUser);
 
         verify(userRepository, times(1)).findById(userId);
         verify(themeRepository, times(1)).findById(themeId);
         verify(mockTheme, times(1)).getId();
-        verify(mockUser, times(1)).userNotHavePermission(mockCreator);
+        verify(mockUser, times(1)).userHavePermission(mockCreator);
         verify(traceTableRepository, times(1)).findByThemes_Id(any(Pageable.class), eq(themeId));
 
         verify(traceTableRepository, times(1)).delete(any());
@@ -253,7 +253,7 @@ public class ThemeServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(UserNotFoundException.class, () -> {
-            themeService.removeTheme(themeId, userId);
+            themeService.removeTheme(themeId, userId, userRepository.findById(userId).get());
         });
 
         assertEquals("Usuário não encontrado", userNotFoundException.getMessage());
@@ -273,7 +273,7 @@ public class ThemeServiceTest {
         when(themeRepository.findById(themeId)).thenReturn(Optional.empty());
 
         ThemeNotFoundException themeNotFoundException = assertThrows(ThemeNotFoundException.class,
-                () -> themeService.removeTheme(themeId, userId));
+                () -> themeService.removeTheme(themeId, userId, userRepository.findById(userId).get()));
 
         assertEquals("Tema não encontrado!", themeNotFoundException.getMessage());
 
@@ -295,17 +295,17 @@ public class ThemeServiceTest {
         when(themeRepository.findById(themeId)).thenReturn(Optional.of(mockTheme));
         when(mockTheme.getCreator()).thenReturn(mockCreator);
 
-        when(mockUser.userNotHavePermission(mockCreator)).thenReturn(true);
+        when(mockUser.userHavePermission(mockCreator)).thenReturn(true);
 
         UserNotHavePermissionException userNotHavePermissionException = assertThrows(
-                UserNotHavePermissionException.class, () -> themeService.removeTheme(themeId, userId));
+                UserNotHavePermissionException.class, () -> themeService.removeTheme(themeId, userId, mockUser));
 
         assertEquals("Esse usuário não tem permissão para remover esse tema!",
                 userNotHavePermissionException.getMessage());
 
         verify(userRepository, times(1)).findById(userId);
         verify(themeRepository, times(1)).findById(themeId);
-        verify(mockUser, times(1)).userNotHavePermission(mockCreator);
+        verify(mockUser, times(1)).userHavePermission(mockCreator);
         verifyNoInteractions(traceTableRepository, minioService);
     }
 
@@ -322,7 +322,7 @@ public class ThemeServiceTest {
         when(themeRepository.findById(themeId)).thenReturn(Optional.of(mockTheme));
         when(mockTheme.getCreator()).thenReturn(mockUser);
 
-        when(mockUser.userNotHavePermission(mockUser)).thenReturn(false);
+        when(mockUser.userHavePermission(mockUser)).thenReturn(false);
         when(mockNewTheme.name()).thenReturn("Nome Atualizado");
 
         when(themeRepository.save(mockTheme)).thenReturn(mockTheme);
@@ -330,7 +330,7 @@ public class ThemeServiceTest {
         ThemeResponse mockResponse = mock(ThemeResponse.class);
         when(mockTheme.entityToResponse()).thenReturn(mockResponse);
 
-        ThemeResponse result = themeService.updateTheme(mockNewTheme, themeId, userId);
+        ThemeResponse result = themeService.updateTheme(mockNewTheme, themeId, userId, mockUser);
 
         assertEquals(mockResponse, result);
         verify(themeRepository).save(mockTheme);
@@ -347,7 +347,7 @@ public class ThemeServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         UserNotFoundException userNotFoundException = assertThrows(UserNotFoundException.class,
-                () -> themeService.updateTheme(mockNewTheme, themeId, userId));
+                () -> themeService.updateTheme(mockNewTheme, themeId, userId, userRepository.findById(userId).get()));
 
         assertEquals("Usuário não encontrado", userNotFoundException.getMessage());
 
@@ -367,7 +367,7 @@ public class ThemeServiceTest {
         when(themeRepository.findById(themeId)).thenReturn(Optional.empty());
 
         ThemeNotFoundException exception = assertThrows(ThemeNotFoundException.class, () -> {
-            themeService.updateTheme(mockNewTheme, themeId, userId);
+            themeService.updateTheme(mockNewTheme, themeId, userId, mockUser);
         });
 
         assertEquals("Tema não encontrado!", exception.getMessage());
@@ -390,17 +390,17 @@ public class ThemeServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
         when(themeRepository.findById(themeId)).thenReturn(Optional.of(mockTheme));
         when(mockTheme.getCreator()).thenReturn(mockCreator);
-        when(mockUser.userNotHavePermission(mockCreator)).thenReturn(true);
+        when(mockUser.userHavePermission(mockCreator)).thenReturn(true);
 
         UserNotHavePermissionException exception = assertThrows(UserNotHavePermissionException.class, () -> {
-            themeService.updateTheme(mockNewTheme, themeId, userId);
+            themeService.updateTheme(mockNewTheme, themeId, userId, mockUser);
         });
 
         assertEquals("Esse usuário não tem permissão para remover esse tema!", exception.getMessage());
 
         verify(userRepository).findById(userId);
         verify(themeRepository).findById(themeId);
-        verify(mockUser).userNotHavePermission(mockCreator);
+        verify(mockUser).userHavePermission(mockCreator);
         verify(themeRepository, never()).save(any());
     }
 }

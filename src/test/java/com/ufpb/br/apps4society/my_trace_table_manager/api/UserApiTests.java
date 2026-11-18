@@ -104,7 +104,7 @@ class UserApiTests {
                     }
                     """;
 
-//            //campo vazio
+            //campo vazio
             given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + obterTokenAdmin())
@@ -114,7 +114,7 @@ class UserApiTests {
             .then()
                     .statusCode(400);
 
-//            //campo inexistente
+            //campo inexistente
             given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + obterTokenAdmin())
@@ -124,7 +124,7 @@ class UserApiTests {
             .then()
                     .statusCode(400);
 
-//            //campo nulo
+            //campo nulo
             given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + obterTokenAdmin())
@@ -159,7 +159,7 @@ class UserApiTests {
 
             String requestInvalidName = """
                     {
-                        "name": "Testes de API com mais de 30 caractÃ©res no nome",
+                        "name": "Testes de API com mais de 30 caractéres no nome",
                         "email": "api.testes-003@teste.com",
                         "password": "123",
                         "role": "ADMIN"
@@ -175,7 +175,7 @@ class UserApiTests {
                     }
                     """;
 
-//            //Email invÃ¡lido
+            //Email inválido
             given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + obterTokenAdmin())
@@ -185,7 +185,7 @@ class UserApiTests {
             .then()
                     .statusCode(400);
 
-//            //Senha invÃ¡lido
+            //Senha inválida
             given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + obterTokenAdmin())
@@ -195,7 +195,7 @@ class UserApiTests {
             .then()
                     .statusCode(400);
 
-//            //Nome invÃ¡lido
+            //Nome inválido
             given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + obterTokenAdmin())
@@ -205,7 +205,7 @@ class UserApiTests {
             .then()
                     .statusCode(400);
 
-//            //Role invÃ¡lido
+            //Role inválido
             given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + obterTokenAdmin())
@@ -232,7 +232,7 @@ class UserApiTests {
 
             given()
                     .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + ApiTestSupport.obterToken("api.testes-004@teste.com", "password"))
+                    .header("Authorization", "Bearer " + ApiTestSupport.obterTokenAdmin())
                     .body(request)
             .when()
                     .post(BASE_PATH + "/register")
@@ -330,7 +330,7 @@ class UserApiTests {
                     }
                     """;
 
-//            //Sem code
+            //Sem code
             given()
                     .contentType(ContentType.JSON)
                     .body(request)
@@ -480,7 +480,7 @@ class UserApiTests {
 
         @Test
         @DisplayName("CT-USR-015: login com email inexistente")
-        void CT_USR_015_LoginError_shouldReturn400() {
+        void CT_USR_015_LoginError_shouldReturn403() {
             testDataSupport.prepararUsuario("aluno-015@test.com");
 
             String request = """
@@ -634,7 +634,7 @@ class UserApiTests {
 
         @Test
         @DisplayName("CT-USR-023: find all Users without bearer token")
-        void CT_USR_023_findAllSuccessfully_shouldListProfessorsUserAndReturn200() {
+        void CT_USR_023_findAllError_shouldAndReturn403() {
             testDataSupport.prepararUsuario("aluno-023@test.com");
 
             given()
@@ -854,7 +854,7 @@ class UserApiTests {
 
         @Test
         @DisplayName("CT-USR-034: usuário comum atualiza outro usuário e retorna 403")
-        void CT_USR_034_updateUserError_shouldNotUpdateUserAndReturn404() {
+        void CT_USR_034_updateUserError_shouldNotUpdateUserAndReturn403() {
             testDataSupport.prepararUsuario("aluno-034@test.com");
             User aluno2 = testDataSupport.prepararUsuario("aluno2-034@test.com");
             String update = """
@@ -877,8 +877,8 @@ class UserApiTests {
         }
 
         @Test
-        @DisplayName("CT-USR-035: usuário comum atualiza role para ADMIN e retorna 403")
-        void CT_USR_035_updateUserError_shouldNotUpdateUserAndReturn200() {
+        @DisplayName("CT-USR-035: usuário comum atualiza role para ADMIN e retorna 200")
+        void CT_USR_035_updateUserSuccessfully_shouldUpdateUserAndReturn200() {
             User aluno = testDataSupport.prepararUsuario("aluno-035@test.com");
             String update = """
                     {
@@ -949,7 +949,7 @@ class UserApiTests {
 
         @Test
         @DisplayName("CT-USR-039: usuário comum consulta usuário inválido")
-        void CT_USR_039_verifyAdminError_shouldReturn403() {
+        void CT_USR_039_verifyAdminError_shouldReturn404() {
             testDataSupport.prepararUsuario("aluno-039@test.com");
 
             given()

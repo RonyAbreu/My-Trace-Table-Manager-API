@@ -415,18 +415,18 @@ CT-TRT-055
 
 # Resumo dos Bugs
 
-| ID | Bug | Casos relacionados | Severidade | Prioridade | Status |
-|----|-----|--------------------|------------|------------|--------|
-| BUG-001 | Escalação de privilégio ao atualizar usuário | CT-USR-035 | Crítica | Alta | Aberto |
-| BUG-002 | Criação de recurso para outro usuário | CT-THM-004 | Alta | Alta | Aberto |
-| BUG-003 | Consultas de temas disponíveis sem autenticação | CT-THM-006, 009, 012, 019 | Alta | Alta | Aberto |
-| BUG-004 | Consulta de temas para trace table inexistente retorna 200 | CT-THM-018 | Média | Média | Aberto |
-| BUG-005 | Exclusão de tema sem autorização adequada | CT-THM-023, 025, 026 | Alta | Alta | Aberto |
-| BUG-006 | Atualização de tema sem autorização adequada | CT-THM-030, 032 | Alta | Alta | Aberto |
-| BUG-007 | Criação de trace table para outro usuário | CT-TRT-007 | Crítica | Alta | Aberto |
-| BUG-008 | Edição ou atualização de trace table de outro usuário | CT-TRT-025, 033 | Crítica | Alta | Aberto |
-| BUG-009 | Código HTTP incorreto em cenário que deveria retornar 404 | CT-TRT-045 | Média | Média | Aberto |
-| BUG-010 | Consulta de respostas para trace table inexistente retorna 200 | CT-TRT-055 | Média | Média | Aberto |
+| ID      | Bug                                                            | Casos relacionados        | Severidade | Prioridade | Status    |
+|---------|----------------------------------------------------------------|---------------------------|------------|------------|-----------|
+| BUG-001 | Escalação de privilégio ao atualizar usuário                   | CT-USR-035                | Crítica    | Alta       | Corrigido |
+| BUG-002 | Criação de recurso para outro usuário                          | CT-THM-004                | Alta       | Alta       | Corrigido |
+| BUG-003 | Consultas de temas disponíveis sem autenticação                | CT-THM-006, 009, 012, 019 | Alta       | Alta       | Corrigido |
+| BUG-004 | Consulta de temas para trace table inexistente retorna 200     | CT-THM-018                | Média      | Média      | Corrigido |
+| BUG-005 | Exclusão de tema sem autorização adequada                      | CT-THM-023, 025, 026      | Alta       | Alta       | Corrigido |
+| BUG-006 | Atualização de tema sem autorização adequada                   | CT-THM-030, 032           | Alta       | Alta       | Corrigido |
+| BUG-007 | Criação de trace table para outro usuário                      | CT-TRT-007                | Crítica    | Alta       | Corrigido |
+| BUG-008 | Edição ou atualização de trace table de outro usuário          | CT-TRT-025, 033           | Crítica    | Alta       | Corrigido |
+| BUG-009 | Código HTTP incorreto em cenário que deveria retornar 404      | CT-TRT-045                | Média      | Média      | Corrigido |
+| BUG-010 | Consulta de respostas para trace table inexistente retorna 200 | CT-TRT-055                | Média      | Média      | Corrigido |
 ---
 
 # Métricas
@@ -439,6 +439,5 @@ CT-TRT-055
 | Bugs altos                                       |          4 |          |
 | Bugs médios                                      |          3 | 
 | Bugs baixos                                      |          0 |
-| Bugs corrigidos                                  |          0 | 
-| Bugs abertos                                     |         10 |
-| Registros pendentes de caracterização            |          1 |
+| Bugs corrigidos                                  |         10 | 
+| Bugs abertos                                     |          0 |

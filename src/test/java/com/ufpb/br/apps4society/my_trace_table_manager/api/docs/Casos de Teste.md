@@ -19,21 +19,9 @@
 
 **Objetivo:** Validar o cadastro de usuário utilizando um administrador.
 
-**Pré-condições:**
-- Possuir token JWT com autoridade `ADMIN`.
-- Utilizar dados válidos para `name`, `email`, `password` e `role`.
-
 **Endpoint:** `POST /v1/user/register`
 
-**Passos:**
-1. Autenticar como administrador.
-2. Enviar o payload para `POST /v1/user/register`.
-
-**Resultado esperado:** Retornar `201`, com `id` preenchido, `name` igual a `Testes de API`, `email` igual a `api.testes@teste.com` e `role` igual a `admin`.
-
-**Resultado obtido:** [Preencher após execução]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `201`
 
 ---
 
@@ -41,16 +29,9 @@
 
 **Objetivo:** Validar a rejeição de dados obrigatórios inválidos no cadastro.
 
-**Pré-condições:**
-- Possuir token JWT `ADMIN`.
-
 **Endpoint:** `POST /v1/user/register`
 
 **Resultado esperado:** Cada requisição deve retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -58,14 +39,9 @@
 
 **Objetivo:** Validar a rejeição de email, senha, nome e role fora das regras aceitas.
 
-**Pré-condições:**
-- Possuir token JWT `ADMIN`.
+**Endpoint:** `POST /v1/user/register`
 
 **Resultado esperado:** Cada requisição deve retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -73,16 +49,9 @@
 
 **Objetivo:** Validar o tratamento de email duplicado.
 
-**Pré-condições:**
-- Possuir usuário previamente cadastrado com o email utilizado.
-- Possuir o usuário `admin@test.com` previamente cadastrado.
-- Possuir token válido de aluno, conforme o teste implementado.
+**Endpoint:** `POST /v1/user/register`
 
 **Resultado esperado:** Retornar `400` com a mensagem `Tente se registrar com outro email`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -92,11 +61,7 @@
 
 **Endpoint:** `POST /v1/user/register`
 
-**Resultado esperado:** Retornar `403` (é o status efetivamente verificado pelo teste, apesar do texto do `@DisplayName`).
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -104,14 +69,9 @@
 
 **Objetivo:** Validar a autorização baseada na autoridade `ADMIN`.
 
-**Pré-condições:**
-- Possuir token válido de usuário sem autoridade `ADMIN`.
+**Endpoint:** `POST /v1/user/register`
 
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -125,21 +85,15 @@
 
 **Resultado esperado:** Retornar `201`, com `id` preenchido, os dados enviados e `role` igual a `aluno`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
-## CT-USR-008 — Registrar aluno com código ausente, vazio, inválido ou expirado
+## CT-USR-008 — Registrar aluno com código ausente
 
-**Objetivo:** Validar as diferentes condições inválidas do código de cadastro.
+**Objetivo:** Validar a rejeição do código de cadastro ausente.
 
-**Resultado esperado:** Retornar `403`, conforme o comportamento atual do sistema.
+**Endpoint:** `POST /v1/user/regAlun`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -149,11 +103,7 @@
 
 **Endpoint:** `POST /v1/user/regAlun?code=`
 
-**Resultado esperado:** Retornar `403`, conforme o comportamento atual do sistema.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`
 
 ---
 
@@ -165,10 +115,6 @@
 
 **Resultado esperado:** Retornar `400`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-USR-011 — Registrar aluno com código expirado
@@ -178,10 +124,6 @@
 **Endpoint:** `POST /v1/user/regAlun?code={codeExpired}`
 
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -195,21 +137,15 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-USR-013 — Login com email ou senha ausentes, nulos ou vazios
 
 **Objetivo:** Validar os campos obrigatórios do login.
 
-**Resultado esperado:** Retornar `400`, conforme o comportamento atual do sistema.
+**Endpoint:** `POST /v1/user/login`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `400`.
 
 ---
 
@@ -217,11 +153,9 @@
 
 **Objetivo:** Validar as restrições do payload.
 
-**Resultado esperado:** Retornar `400`, conforme o comportamento atual do sistema.
+**Endpoint:** `POST /v1/user/login`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `400`.
 
 ---
 
@@ -229,11 +163,9 @@
 
 **Objetivo:** Validar o tratamento de usuário não cadastrado.
 
+**Endpoint:** `POST /v1/user/login`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -241,11 +173,9 @@
 
 **Objetivo:** Validar o tratamento de credencial incorreta.
 
-**Resultado esperado:** Retornar `403`, conforme o comportamento atual do sistema.
+**Endpoint:** `POST /v1/user/login`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -257,11 +187,7 @@
 
 **Endpoint:** `GET /v1/user/find`
 
-**Resultado esperado:** Retornar `200`, com o aluno preparado no teste: `Aluno de Teste`, `aluno@test.com` e role `aluno`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`, com o aluno preparado no teste: `Aluno de Teste`, `aluno-017@test.com` e role `aluno`.
 
 ---
 
@@ -269,11 +195,9 @@
 
 **Objetivo:** Validar a proteção do endpoint.
 
+**Endpoint:** `GET /v1/user/find`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -281,11 +205,9 @@
 
 **Objetivo:** Validar rejeição de JWT inválido/expirado.
 
+**Endpoint:** `GET /v1/user/find`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -293,11 +215,9 @@
 
 **Objetivo:** Validar a consistência entre JWT e existência do usuário.
 
-**Resultado esperado:** Rejeitar a consulta de usuário inexistente.
+**Endpoint:** `GET /v1/user/find`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -309,11 +229,7 @@
 
 **Endpoint:** `GET /v1/user/allProfessors?page=&size=&name=aluno`
 
-**Resultado esperado:** Retornar `200`, com `content` não nulo; cada item de `content` contendo `id`, `name`, `email` e `role`; `totalElements` e `totalPages` maiores ou iguais a zero; `size` igual a `12`; e `number` igual a `0`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`
 
 ---
 
@@ -323,11 +239,7 @@
 
 **Endpoint:** `GET /v1/user/allProfessors?page=&size=&name=`
 
-**Resultado esperado:** Retornar `200`, com `content` não nulo; cada item de `content` contendo `id`, `name`, `email` e `role`; `totalElements` e `totalPages` maiores ou iguais a zero; `size` igual a `12`; e `number` igual a `0`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`
 
 ---
 
@@ -335,11 +247,10 @@
 
 **Objetivo:** Validar autenticação do endpoint.
 
+**Endpoint:** `GET /v1/user/allProfessors?page=&size=&name=`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -353,9 +264,6 @@
 
 **Resultado esperado:** Retornar `204`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -363,11 +271,10 @@
 
 **Objetivo:** Validar tratamento de recurso inexistente.
 
+**Endpoint:** `DELETE /v1/user/{id}`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -375,11 +282,10 @@
 
 **Objetivo:** Validar restrição de autorização.
 
+**Endpoint:** `DELETE /v1/user/{id}`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -387,11 +293,10 @@
 
 **Objetivo:** Validar o parâmetro de identificação.
 
-**Resultado esperado:** Retornar `403`.
+**Endpoint:** `DELETE /v1/user/{id}`
 
-**Resultado obtido:** [Preencher]
+**Resultado esperado:** Retornar `404`.
 
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -399,11 +304,10 @@
 
 **Objetivo:** Validar autenticação.
 
+**Endpoint:** `DELETE /v1/user/{id}`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -415,11 +319,8 @@
 
 **Endpoint:** `PATCH /v1/user/{id}`
 
-**Resultado esperado:** Retornar `200`, com nome `Testes de Aluno`, email `aluno.testes@test.com` e role `professor`.
+**Resultado esperado:** Retornar `200`, com nome `Testes de Aluno`, email `aluno.testes-029@test.com` e role `aluno`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -427,11 +328,9 @@
 
 **Objetivo:** Validar preservação da senha atual.
 
-**Resultado esperado:** Retornar `200`, atualizar nome/email/role e manter a senha atual.
+**Endpoint:** `PATCH /v1/user/{id}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`
 
 ---
 
@@ -439,11 +338,9 @@
 
 **Objetivo:** Validar o comportamento da atualização quando o ID informado não existe e o payload contém nome fora do limite.
 
-**Resultado esperado:** Retornar `400`, pois a validação do payload ocorre antes da busca do usuário.
+**Endpoint:** `PATCH /v1/user/{id}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `400`
 
 ---
 
@@ -451,11 +348,9 @@
 
 **Objetivo:** Validar que o ID inexistente é identificado antes da análise de unicidade do email.
 
-**Resultado esperado:** Retornar `404`, pois o usuário indicado pelo ID não existe.
+**Endpoint:** `PATCH /v1/user/{id}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`
 
 ---
 
@@ -463,11 +358,10 @@
 
 **Objetivo:** Validar tratamento de recurso inexistente.
 
+**Endpoint:** `PATCH /v1/user/{id}`
+
 **Resultado esperado:** Retornar `404`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -475,11 +369,10 @@
 
 **Objetivo:** Validar autorização por usuário.
 
+**Endpoint:** `PATCH /v1/user/{id}`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -487,11 +380,9 @@
 
 **Objetivo:** Verificar a regra de segurança identificada no código atual.
 
-**Resultado esperado:** Retornar `403`.
+**Endpoint:** `PATCH /v1/user/{id}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`, mantendo o role como `aluno`.
 
 ---
 
@@ -501,11 +392,9 @@
 
 **Objetivo:** Validar consulta de autoridade administrativa.
 
-**Resultado esperado:** Retornar `200` com `isAdmin` igual a `true`.
+**Endpoint:** `GET /v1/user/admin/{id}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`.
 
 ---
 
@@ -513,11 +402,10 @@
 
 **Objetivo:** Validar resposta para usuário que não é administrador.
 
-**Resultado esperado:** Retornar `200` com `false`.
+**Endpoint:** `GET /v1/user/admin/{id}`
 
-**Resultado obtido:** [Preencher]
+**Resultado esperado:** Retornar `200`.
 
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -525,11 +413,10 @@
 
 **Objetivo:** Validar autorização da consulta.
 
+**Endpoint:** `GET /v1/user/admin/{id}`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -537,11 +424,10 @@
 
 **Objetivo:** Validar tratamento de identificador inválido/inexistente.
 
+**Endpoint:** `GET /v1/user/admin/{id}`
+
 **Resultado esperado:** Retornar `404`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -549,11 +435,10 @@
 
 **Objetivo:** Validar autenticação.
 
+**Endpoint:** `GET /v1/user/admin/{id}`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -567,9 +452,6 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -581,9 +463,6 @@
 
 **Resultado esperado:** Retornar `400`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -595,9 +474,6 @@
 
 **Resultado esperado:** Retornar `400`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -607,11 +483,7 @@
 
 **Endpoint:** `POST /v1/verification/password-reset/send`
 
-**Resultado esperado:** Retornar `200` e enviar uma mensagem pelo `JavaMailSender`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`.
 
 ---
 
@@ -623,10 +495,6 @@
 
 **Resultado esperado:** Retornar `404`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-VER-006 — Enviar recuperação com email vazio
@@ -636,10 +504,6 @@
 **Endpoint:** `POST /v1/verification/password-reset/send`
 
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -651,21 +515,15 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-VER-008 — Confirmar recuperação com email vazio
 
 **Objetivo:** Validar a rejeição de email vazio na confirmação.
 
+**Endpoint:** `POST /v1/verification/password-reset/confirm`
+
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -673,11 +531,9 @@
 
 **Objetivo:** Validar a rejeição de código vazio.
 
+**Endpoint:** `POST /v1/verification/password-reset/confirm`
+
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -685,11 +541,9 @@
 
 **Objetivo:** Validar a rejeição de código expirado.
 
+**Endpoint:** `POST /v1/verification/password-reset/confirm`
+
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -697,11 +551,9 @@
 
 **Objetivo:** Validar a rejeição de código já utilizado.
 
+**Endpoint:** `POST /v1/verification/password-reset/confirm`
+
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -709,11 +561,9 @@
 
 **Objetivo:** Validar a rejeição de nova senha fora das regras.
 
+**Endpoint:** `POST /v1/verification/password-reset/confirm`
+
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -721,11 +571,9 @@
 
 **Objetivo:** Validar a consistência entre o código e o email informado.
 
+**Endpoint:** `POST /v1/verification/password-reset/confirm`
+
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -739,33 +587,25 @@
 
 **Resultado esperado:** Retornar `201`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-THM-002 — Criar tema para usuário inexistente ou com ID inválido
 
 **Objetivo:** Validar o identificador do usuário.
 
-**Resultado esperado:** Retornar `403`.
+**Endpoint:** `POST /v1/theme/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
-## CT-THM-003 — Criar tema com nome ausente, vazio ou fora dos limites
+## CT-THM-003 — Criar tema com nome vazio.
 
 **Objetivo:** Validar o campo `name`.
 
-**Resultado esperado:** Retornar `400`, conforme o comportamento atual do sistema.
+**Endpoint:** `POST /v1/theme/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `400`.
 
 ---
 
@@ -773,25 +613,19 @@
 
 **Objetivo:** Verificar a autorização baseada no proprietário.
 
+**Endpoint:** `POST /v1/theme/{userId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
 ## CT-THM-005 — Listar temas existentes
 
-**Objetivo:** Validar listagem pública de temas.
+**Objetivo:** Validar listagem de temas.
 
 **Endpoint:** `GET /v1/theme`
 
 **Resultado esperado:** Retornar `200`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -799,11 +633,9 @@
 
 **Objetivo:** Validar a autenticação da listagem.
 
+**Endpoint:** `GET /v1/theme`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -815,21 +647,15 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-THM-008 — Buscar tema inexistente ou com ID inválido
 
 **Objetivo:** Validar o identificador informado.
 
-**Resultado esperado:** Retornar `404`, conforme o comportamento atual do sistema.
+**Endpoint:** `GET /v1/theme/{themeId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`
 
 ---
 
@@ -837,25 +663,19 @@
 
 **Objetivo:** Validar a autenticação da busca por ID.
 
+**Endpoint:** `GET /v1/theme/{themeId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
 ## CT-THM-010 — Buscar tema por nome
 
-**Objetivo:** Validar busca por nome, inclusive diferenças de maiúsculas e minúsculas.
+**Objetivo:** Validar busca por nome.
 
 **Endpoint:** `GET /v1/theme/name/{themeName}`
 
-**Resultado esperado:** Retornar `200` para tema existente e validar comportamento case-insensitive.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`.
 
 ---
 
@@ -863,11 +683,9 @@
 
 **Objetivo:** Validar ausência de correspondência.
 
+**Endpoint:** `GET /v1/theme/name/{themeName}`
+
 **Resultado esperado:** Retornar `404`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -875,25 +693,19 @@
 
 **Objetivo:** Validar a busca por nome sem token.
 
-**Resultado esperado:** Retornar `404`.
+**Endpoint:** `GET /v1/theme/name/{themeName}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
 ## CT-THM-013 — Buscar temas de usuário existente
 
-**Objetivo:** Validar consulta pública dos temas de um usuário.
+**Objetivo:** Validar consulta dos temas de um usuário.
 
 **Endpoint:** `GET /v1/theme/user/{userId}`
 
 **Resultado esperado:** Retornar `200` com os temas do usuário.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -901,11 +713,9 @@
 
 **Objetivo:** Validar lista vazia.
 
+**Endpoint:** `GET /v1/theme/user/{userId}`
+
 **Resultado esperado:** Retornar `200` com lista vazia.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -913,11 +723,9 @@
 
 **Objetivo:** Validar o usuário informado.
 
+**Endpoint:** `GET /v1/theme/user/{userId}`
+
 **Resultado esperado:** Retornar `404`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -925,11 +733,9 @@
 
 **Objetivo:** Validar a busca por usuário sem token.
 
-**Resultado esperado:** Retornar `404`.
+**Endpoint:** `GET /v1/theme/user/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -941,21 +747,15 @@
 
 **Resultado esperado:** Retornar `200` com os temas associados.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
-## CT-THM-018 — Buscar temas de trace table inexistente ou sem temas
+## CT-THM-018 — Buscar temas de trace table inexistente
 
-**Objetivo:** Validar lista vazia quando não há correspondências.
+**Objetivo:** Validar erro de trace.
 
-**Resultado esperado:** Retornar `200` com `content` vazio.
+**Endpoint:** `GET /v1/theme/trace/{traceId}?page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
@@ -963,11 +763,9 @@
 
 **Objetivo:** Validar a autenticação da consulta por trace table.
 
+**Endpoint:** `GET /v1/theme/trace/{traceId}?page=&size=&sort=`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -979,21 +777,15 @@
 
 **Resultado esperado:** Retornar `204`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-THM-021 — Remover tema com ID inexistente
 
 **Objetivo:** Validar os identificadores da remoção.
 
+**Endpoint:** `DELETE /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `404`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1001,11 +793,9 @@
 
 **Objetivo:** Validar o usuário informado na remoção.
 
+**Endpoint:** `DELETE /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `404`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1013,23 +803,19 @@
 
 **Objetivo:** Validar a autorização do usuário comum.
 
+**Endpoint:** `DELETE /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
 ## CT-THM-024 — Remover tema sem token
 
-**Objetivo:** Verificar possibilidade de bypass da autorização pelo `userId` do path.
+**Objetivo:** Verificar autorização.
+
+**Endpoint:** `DELETE /v1/theme/{themeId}/{userId}`
 
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1037,11 +823,9 @@
 
 **Objetivo:** Validar a autorização de outro usuário sobre o tema.
 
+**Endpoint:** `DELETE /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1049,13 +833,9 @@
 
 **Objetivo:** Validar a remoção de tema associado a trace table.
 
-**Endpoint:** `PUT /v1/theme/{themeId}/{userId}`
+**Endpoint:** `DELETE /v1/theme/{themeId}/{userId}`
 
-**Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `204`.
 
 ---
 
@@ -1063,11 +843,9 @@
 
 **Objetivo:** Validar atualização autorizada com nome válido.
 
+**Endpoint:** `PUT /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `200`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1075,11 +853,9 @@
 
 **Objetivo:** Validar nome vazio na atualização.
 
+**Endpoint:** `PUT /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `400`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1087,11 +863,9 @@
 
 **Objetivo:** Validar atualização de tema inexistente.
 
-**Resultado esperado:** Retornar `400`.
+**Endpoint:** `PUT /v1/theme/{themeId}/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
@@ -1099,11 +873,9 @@
 
 **Objetivo:** Validar a autorização de usuário comum.
 
-**Resultado esperado:** Retornar `400`.
+**Endpoint:** `PUT /v1/theme/{themeId}/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -1111,11 +883,9 @@
 
 **Objetivo:** Validar a atualização sem token.
 
+**Endpoint:** `PUT /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1123,11 +893,9 @@
 
 **Objetivo:** Validar a autorização quando outro usuário tenta atualizar o tema.
 
+**Endpoint:** `PUT /v1/theme/{themeId}/{userId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1137,25 +905,19 @@
 
 **Objetivo:** Validar criação completa de trace table.
 
-**Endpoint:** `POST /v1/trace/{userId}`
+**Endpoint:** `POST /v1/trace/{userId}?themesIds=`
 
 **Resultado esperado:** Retornar `201`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
-## CT-TRT-002 — Criar trace table com parte obrigatória ausente, JSON malformado ou payload inválido
+## CT-TRT-002 — Criar trace table com JSON malformado
 
-**Objetivo:** Validar as partes obrigatórias e o conteúdo da requisição multipart.
+**Objetivo:** Validar requisição.
 
-**Resultado esperado:** Rejeitar a requisição com erro apropriado.
+**Endpoint:** `POST /v1/trace/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400` ou `403`.
 
 ---
 
@@ -1163,11 +925,9 @@
 
 **Objetivo:** Validar o `userId`.
 
-**Resultado esperado:** Retornar erro apropriado, normalmente `404` para usuário inexistente.
+**Endpoint:** `POST /v1/trace/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
@@ -1175,23 +935,19 @@
 
 **Objetivo:** Validar `themesIds`.
 
-**Resultado esperado:** Rejeitar a operação.
+**Endpoint:** `POST /v1/trace/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `404`.
 
 ---
 
-## CT-TRT-005 — Criar trace table com imagem vazia, maior que 1 MB ou falha de upload
+## CT-TRT-005 — Criar trace table com imagem vazia
 
-**Objetivo:** Validar restrições de imagem e tratamento de falha no upload.
+**Objetivo:** Validar restrições de imagem vazia.
 
-**Resultado esperado:** Rejeitar a operação ou retornar erro de upload conforme o comportamento implementado.
+**Endpoint:** `POST /v1/trace/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400`.
 
 ---
 
@@ -1199,11 +955,10 @@
 
 **Objetivo:** Validar autenticação.
 
+**Endpoint:** `POST /v1/trace/{userId}?themesIds=`
+
 **Resultado esperado:** Retornar `403`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1211,11 +966,9 @@
 
 **Objetivo:** Verificar autorização pelo usuário autenticado.
 
-**Resultado esperado:** Registrar o comportamento atual, pois o levantamento indica possibilidade de a operação ser permitida.
+**Endpoint:** `POST /v1/trace/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -1223,11 +976,9 @@
 
 **Objetivo:** Validar o formato exigido pelo endpoint.
 
-**Resultado esperado:** Rejeitar a requisição.
+**Endpoint:** `POST /v1/trace/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400`.
 
 ---
 
@@ -1239,21 +990,15 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-TRT-010 — Buscar trace table inexistente ou com ID inválido
 
 **Objetivo:** Validar identificador da trace table.
 
-**Resultado esperado:** Retornar `404` para recurso inexistente ou erro apropriado para ID inválido.
+**Endpoint:** `GET /v1/trace/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
@@ -1265,21 +1010,15 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-TRT-012 — Listar trace tables de usuário sem resultados
 
 **Objetivo:** Validar página vazia.
 
-**Resultado esperado:** Retornar página vazia.
+**Endpoint:** `GET /v1/trace/user/{userId}?page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200` com página vazia.
 
 ---
 
@@ -1287,11 +1026,9 @@
 
 **Objetivo:** Validar o usuário informado.
 
-**Resultado esperado:** Retornar erro apropriado.
+**Endpoint:** `GET /v1/trace/user/{userId}?page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `404`.
 
 ---
 
@@ -1299,11 +1036,9 @@
 
 **Objetivo:** Confirmar que o endpoint é público.
 
-**Resultado esperado:** Executar sem token.
+**Endpoint:** `GET /v1/trace/user/{userId}?page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`.
 
 ---
 
@@ -1313,11 +1048,7 @@
 
 **Endpoint:** `GET /v1/trace/theme/name/{themeName}?prof=&page=&size=&sort=`
 
-**Resultado esperado:** Retornar `200` com resultados compatíveis.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`.
 
 ---
 
@@ -1325,23 +1056,19 @@
 
 **Objetivo:** Validar tema sem correspondência.
 
-**Resultado esperado:** Retornar resultado vazio ou resposta definida para recurso inexistente, conforme implementação.
+**Endpoint:** `GET /v1/trace/theme/name/{themeName}?prof=&page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `404`.
 
 ---
 
-## CT-TRT-017 — Omitir ou informar incorretamente prof
+## CT-TRT-017 — Informar prof inválido
 
 **Objetivo:** Validar o parâmetro `prof`.
 
-**Resultado esperado:** Retornar erro ou resultado conforme validação implementada.
+**Endpoint:** `GET /v1/trace/theme/name/{themeName}?prof=&page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400`.
 
 ---
 
@@ -1353,21 +1080,15 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-TRT-019 — Tema sem trace tables
 
 **Objetivo:** Validar retorno vazio.
 
-**Resultado esperado:** Retornar página vazia.
+**Endpoint:** `GET /v1/trace/theme/{themeId}?page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200` com página vazia.
 
 ---
 
@@ -1375,11 +1096,9 @@
 
 **Objetivo:** Validar `themeId`.
 
-**Resultado esperado:** Retornar erro apropriado.
+**Endpoint:** `GET /v1/trace/theme/{themeId}?page=&size=&sort=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `404`.
 
 ---
 
@@ -1391,21 +1110,15 @@
 
 **Resultado esperado:** Retornar `204`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-TRT-022 — Remover trace table com IDs inexistentes/inválidos
 
 **Objetivo:** Validar identificadores usados na exclusão.
 
-**Resultado esperado:** Retornar erro apropriado.
+**Endpoint:** `DELETE /v1/trace/{traceId}/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `404`.
 
 ---
 
@@ -1413,11 +1126,9 @@
 
 **Objetivo:** Validar autorização.
 
-**Resultado esperado:** Rejeitar a operação.
+**Endpoint:** `DELETE /v1/trace/{traceId}/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `403`.
 
 ---
 
@@ -1425,11 +1136,9 @@
 
 **Objetivo:** Validar autenticação.
 
+**Endpoint:** `DELETE /v1/trace/{traceId}/{userId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1437,11 +1146,9 @@
 
 **Objetivo:** Verificar possível bypass de autorização.
 
-**Resultado esperado:** Registrar o comportamento atual identificado no levantamento.
+**Endpoint:** `DELETE /v1/trace/{traceId}/{userId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -1453,57 +1160,45 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-TRT-027 — Atualizar trace table informando lista vazia de temas
 
 **Objetivo:** Validar atualização sem temas.
 
-**Resultado esperado:** Retornar `200` ou comportamento definido pela implementação.
+**Endpoint:** `PUT /v1/trace/{traceId}/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `400` ou `403`.
 
 ---
 
-## CT-TRT-028 — Atualizar trace table com themesIds inexistentes ou omitidos
+## CT-TRT-028 — Atualizar trace table com themesIds inexistentes
 
 **Objetivo:** Validar `themesIds`.
 
-**Resultado esperado:** Rejeitar a requisição quando os dados forem inválidos ou obrigatórios.
+**Endpoint:** `PUT /v1/trace/{traceId}/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
-## CT-TRT-029 — Atualizar trace table com body malformado ou campos inválidos
+## CT-TRT-029 — Atualizar trace table com body malformado
 
 **Objetivo:** Validar o body.
 
-**Resultado esperado:** Retornar `400` quando aplicável.
+**Endpoint:** `PUT /v1/trace/{traceId}/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `400`.
 
 ---
 
-## CT-TRT-030 — Atualizar trace table com trace table, usuário ou IDs inexistentes/inválidos
+## CT-TRT-030 — Atualizar trace table com trace table inexistentes
 
 **Objetivo:** Validar os identificadores.
 
-**Resultado esperado:** Retornar erro apropriado.
+**Endpoint:** `PUT /v1/trace/{traceId}/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar 404.
 
 ---
 
@@ -1511,11 +1206,9 @@
 
 **Objetivo:** Validar autenticação.
 
+**Endpoint:** `PUT /v1/trace/{traceId}/{userId}?themesIds=`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1523,11 +1216,9 @@
 
 **Objetivo:** Validar autorização.
 
-**Resultado esperado:** Rejeitar a operação.
+**Endpoint:** `PUT /v1/trace/{traceId}/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `403`.
 
 ---
 
@@ -1535,11 +1226,9 @@
 
 **Objetivo:** Verificar possível bypass de autorização.
 
-**Resultado esperado:** Registrar o comportamento atual identificado.
+**Endpoint:** `PUT /v1/trace/{traceId}/{userId}?themesIds=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `403`.
 
 ---
 
@@ -1549,11 +1238,7 @@
 
 **Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado esperado:** Retornar `200`, indicando resposta correta conforme a trace table.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `200`.
 
 ---
 
@@ -1561,11 +1246,9 @@
 
 **Objetivo:** Validar regra de célula ignorada.
 
-**Resultado esperado:** A célula com esperado `#` deve ser ignorada.
+**Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`
 
 ---
 
@@ -1573,11 +1256,9 @@
 
 **Objetivo:** Validar identificação de células incorretas.
 
-**Resultado esperado:** Retornar resposta `200` com os erros correspondentes às células inválidas, conforme estrutura definida.
+**Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `400`, com os erros contendo `row`, `column` e `errorMessage`.
 
 ---
 
@@ -1585,35 +1266,29 @@
 
 **Objetivo:** Validar comparação dos diferentes tipos de célula.
 
-**Resultado esperado:** Cada tipo deve ser tratado conforme a regra correspondente.
+**Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`.
 
 ---
 
-## CT-TRT-038 — Validar trace table inexistente ou tipo de célula desconhecido
+## CT-TRT-038 — Validar trace table inexistente
 
 **Objetivo:** Validar tratamento de dados não suportados.
 
-**Resultado esperado:** Retornar erro apropriado.
+**Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
-## CT-TRT-039 — Validar body malformado, nulo ou com dimensões incompatíveis
+## CT-TRT-039 — Validar dimensões incompatíveis
 
 **Objetivo:** Validar estrutura da matriz recebida.
 
-**Resultado esperado:** Rejeitar a requisição.
+**Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400`.
 
 ---
 
@@ -1621,11 +1296,9 @@
 
 **Objetivo:** Validar que os erros retornados contenham linha, coluna e mensagem.
 
-**Resultado esperado:** Cada erro deve possuir `linha`, `coluna` e `mensagem` conforme estrutura implementada.
+**Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400`.
 
 ---
 
@@ -1633,11 +1306,9 @@
 
 **Objetivo:** Confirmar que `/check` é público.
 
-**Resultado esperado:** Executar sem token quando o restante dos dados for válido.
+**Endpoint:** `POST /v1/trace/check/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`.
 
 ---
 
@@ -1649,21 +1320,15 @@
 
 **Resultado esperado:** Retornar `200`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
-## CT-TRT-043 — Submeter resposta incorreta ou matriz vazia
+## CT-TRT-043 — Submeter matriz vazia
 
 **Objetivo:** Validar o comportamento do endpoint que atualmente apenas persiste os dados.
 
-**Resultado esperado:** Registrar o comportamento atual, inclusive para resposta incorreta ou matriz vazia.
+**Endpoint:** `POST /v1/trace/submit/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`.
 
 ---
 
@@ -1671,11 +1336,9 @@
 
 **Objetivo:** Validar autenticação.
 
+**Endpoint:** `POST /v1/trace/submit/{traceId}`
+
 **Resultado esperado:** Retornar `403`.
-
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
 
 ---
 
@@ -1683,23 +1346,19 @@
 
 **Objetivo:** Validar existência da trace table.
 
-**Resultado esperado:** Retornar erro apropriado.
+**Endpoint:** `POST /v1/trace/submit/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retornar `404`.
 
 ---
 
-## CT-TRT-046 — Submeter resposta com body malformado ou estrutura inválida
+## CT-TRT-046 — Submeter resposta com body malformado
 
 **Objetivo:** Validar a estrutura da matriz recebida.
 
-**Resultado esperado:** Rejeitar a requisição.
+**Endpoint:** `POST /v1/trace/submit/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400`.
 
 ---
 
@@ -1707,11 +1366,9 @@
 
 **Objetivo:** Validar consistência entre resposta salva e usuário do JWT.
 
-**Resultado esperado:** A resposta deve ficar associada ao usuário autenticado.
+**Endpoint:** `POST /v1/trace/submit/{traceId}`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`, com a resposta associada ao usuário autenticado.
 
 ---
 
@@ -1723,21 +1380,15 @@
 
 **Resultado esperado:** Retornar `200` com as respostas do exercício.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 ## CT-TRT-049 — Filtrar respostas por período
 
 **Objetivo:** Validar filtro de datas.
 
-**Resultado esperado:** Retornar apenas as respostas dentro do período informado.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`, apenas com as respostas dentro do período informado.
 
 ---
 
@@ -1745,11 +1396,9 @@
 
 **Objetivo:** Validar filtro `studentName`.
 
-**Resultado esperado:** Retornar apenas respostas correspondentes ao aluno informado.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`, apenas com respostas correspondentes ao aluno informado.
 
 ---
 
@@ -1757,11 +1406,9 @@
 
 **Objetivo:** Validar combinação dos filtros.
 
-**Resultado esperado:** Retornar apenas registros que atendam aos dois filtros.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`, apenas com registros que atendam aos dois filtros.
 
 ---
 
@@ -1769,23 +1416,19 @@
 
 **Objetivo:** Validar retorno sem registros.
 
-**Resultado esperado:** Retornar lista vazia.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200` com lista vazia.
 
 ---
 
-## CT-TRT-053 — Consultar respostas com datas inválidas ou período invertido
+## CT-TRT-053 — Consultar respostas com datas inválidas
 
 **Objetivo:** Validar os filtros de data.
 
-**Resultado esperado:** Rejeitar filtros inválidos.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `400`.
 
 ---
 
@@ -1793,11 +1436,9 @@
 
 **Objetivo:** Validar o caso de fronteira dos filtros de período.
 
-**Resultado esperado:** Registrar e validar o comportamento definido pela implementação.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`.
 
 ---
 
@@ -1805,11 +1446,9 @@
 
 **Objetivo:** Validar consistência do recurso consultado.
 
-**Resultado esperado:** Retornar erro apropriado.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `404`.
 
 ---
 
@@ -1817,11 +1456,9 @@
 
 **Objetivo:** Confirmar que a consulta é pública.
 
-**Resultado esperado:** Executar sem token.
+**Endpoint:** `GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=`
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
+**Resultado esperado:** Retorna `200`.
 
 ---
 
@@ -1833,32 +1470,14 @@
 
 **Resultado esperado:** Retornar `200` com `MetricsResponse`.
 
-**Resultado obtido:** [Preencher]
-
-**Status:** `NÃO EXECUTADO`
-
 ---
 
 # Resumo dos Casos
 
-| Controller             | Casos documentados | Observação                                                                       |
-|------------------------|-------------------:|----------------------------------------------------------------------------------|
-| UserController         |                 40 | Casos correspondentes aos testes implementados em `UserApiTests.java`            |
-| VerificationController |                 13 | Casos correspondentes aos testes implementados em `VerificationApiTests.java`   |
-| ThemeController        |                 32 | Casos correspondentes aos testes implementados em `ThemeApiTests.java`          |
-| TraceTableController   |                 57 | Casos correspondentes aos testes implementados em `TraceTableApiTests.java`     |
-| **Total documentado**  |            **142** | Casos correspondentes à suíte final                                               |
-
----
-
-# Premissas gerais dos testes
-
-- Controllers analisados: `UserController`, `VerificationController`, `ThemeController` e `TraceTableController`.
-- Total de endpoints analisados: 30.
-- Headers JSON: `Content-Type: application/json` e `Accept: application/json`.
-- Endpoints protegidos exigem `Authorization: Bearer <JWT>`.
-- Erros de validação normalmente retornam `400`.
-- Erros de recurso inexistente retornam `404`.
-- Falhas de autenticação/autorização normalmente retornam `403`.
-- Erros comuns possuem `timestamp`, `code`, `message` e `path`.
-- Erros de validação também possuem `fieldMessageList`.
+| Controller             | Casos documentados | Observação                                                                    |
+|------------------------|-------------------:|-------------------------------------------------------------------------------|
+| UserController         |                 40 | Casos correspondentes aos testes implementados em `UserApiTests.java`         |
+| VerificationController |                 13 | Casos correspondentes aos testes implementados em `VerificationApiTests.java` |
+| ThemeController        |                 32 | Casos correspondentes aos testes implementados em `ThemeApiTests.java`        |
+| TraceTableController   |                 57 | Casos correspondentes aos testes implementados em `TraceTableApiTests.java`   |
+| **Total documentado**  |            **142** | Casos correspondentes à suíte final                                           |

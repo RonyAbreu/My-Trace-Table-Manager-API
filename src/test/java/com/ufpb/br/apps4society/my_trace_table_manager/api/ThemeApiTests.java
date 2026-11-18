@@ -44,7 +44,7 @@ public class ThemeApiTests {
 
         @Test
         @DisplayName("CT-THM-001: Criar tema para usuário existente")
-        void CT_THM_001_insertThemeSuccessfully_shouldCreateThemeAndReturn200() {
+        void CT_THM_001_insertThemeSuccessfully_shouldCreateThemeAndReturn201() {
             User professor = testDataSupport.prepararProfessor("professor-001@test.com");
 
             String theme = """
@@ -309,7 +309,7 @@ public class ThemeApiTests {
 
         @Test
         @DisplayName("CT-THM-016: busca de temas por usuário sem token")
-        void CT_THM_016_listByUserError_shouldReturn404() {
+        void CT_THM_016_listByUserError_shouldReturn403() {
             User professor = testDataSupport.prepararProfessor("professor-016@test.com");
 
             given()
@@ -346,7 +346,7 @@ public class ThemeApiTests {
 
         @Test
         @DisplayName("CT-THM-018: buscar temas de trace table inexistente")
-        void CT_THM_018_listByTraceTableSuccessfully_shouldReturnEmptyPageAnd200() {
+        void CT_THM_018_listByTraceTableError_shouldReturn404() {
             User professor = testDataSupport.prepararProfessor("professor-018@test.com");
             Theme tema = testDataSupport.prepararTema("Tema de Teste 018", professor.getEmail());
 

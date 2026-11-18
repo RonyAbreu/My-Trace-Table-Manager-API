@@ -63,7 +63,7 @@ public class VerificationApiTests {
 
         @Test
         @DisplayName("CT-VER-002: Enviar código de cadastro para email já cadastrado")
-        void CT_VER_002_sendRegistrationCodeError_shouldReturn403() {
+        void CT_VER_002_sendRegistrationCodeError_shouldReturn400() {
             testDataSupport.prepararUsuario("victorkawe07-002@gmail.com");
             String json = """
                     {
@@ -84,7 +84,7 @@ public class VerificationApiTests {
 
         @Test
         @DisplayName("CT-VER-003: Enviar código de cadastros em para email inválido")
-        void CT_VER_003_sendRegistrationCodeError_shouldReturn403() {
+        void CT_VER_003_sendRegistrationCodeError_shouldReturn400() {
             testDataSupport.prepararUsuario("victorkawe07-003@gmail.com");
             String json = """
                     {
