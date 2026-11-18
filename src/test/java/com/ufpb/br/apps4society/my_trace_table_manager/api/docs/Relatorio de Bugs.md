@@ -26,7 +26,7 @@ PATCH /v1/user/{id}
 
 **Severidade:** `Crítica`
 **Prioridade:** `Alta`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -46,10 +46,6 @@ CT-USR-035: esperado 403, obtido 200
 
 CT-USR-035
 
-### Observações
-
-A falha permite que um usuário comum obtenha privilégios administrativos. Deve ser tratada como um problema de autorização.
-
 ---
 
 ## BUG-002 — Criação de recurso para outro usuário
@@ -61,11 +57,14 @@ O usuário consegue criar um recurso destinado a outro usuário, embora a opera�
 Criação de recurso com identificação de outro usuário.
 
 **Endpoint:**
-Rota de criação exercitada pelo CT-THM-004; a rota exata não foi informada na lista atualizada.
+
+```http
+POST /v1/theme/{userId}
+```
 
 **Severidade:** `Alta`
 **Prioridade:** `Alta`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -85,10 +84,6 @@ CT-THM-004: esperado 403, obtido 201
 
 CT-THM-004
 
-### Observações
-
-Convém confirmar se o recurso mencionado nesse caso é uma trace table ou um tema e registrar a rota exata no caso de teste. O comportamento e os códigos HTTP foram mantidos conforme a descrição fornecida.
-
 ---
 
 ## BUG-003 — Consultas de temas disponíveis sem autenticação
@@ -107,7 +102,7 @@ GET /v1/theme/**
 
 **Severidade:** `Alta`
 **Prioridade:** `Alta`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -130,10 +125,6 @@ CT-THM-019: esperado 403, obtido 200
 
 CT-THM-006 | CT-THM-009 | CT-THM-012 | CT-THM-019
 
-### Observações
-
-As consultas testadas não estão exigindo a autenticação esperada. A configuração de segurança e as regras aplicadas aos endpoints devem ser verificadas.
-
 ---
 
 ## BUG-004 — Consulta de temas para trace table inexistente retorna 200
@@ -152,7 +143,7 @@ GET /v1/theme/trace/{traceId}
 
 **Severidade:** `Média`
 **Prioridade:** `Média`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -190,7 +181,7 @@ DELETE /v1/theme/{themeId}/{userId}
 
 **Severidade:** `Alta`
 **Prioridade:** `Alta`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -205,16 +196,11 @@ A exclusão é aceita e retorna HTTP 204.
 ```text
 CT-THM-023: esperado 403, obtido 204
 CT-THM-025: esperado 403, obtido 204
-CT-THM-026: esperado 403, obtido 204
 ```
 
 ### Casos de teste relacionados
 
 CT-THM-023 | CT-THM-025
-
-### Observações
-
-Os três casos informados descrevem falhas de autorização na exclusão. O CT-THM-025 e o CT-THM-026 foram mantidos como cenários relacionados, conforme a lista fornecida.
 
 ---
 
@@ -234,7 +220,7 @@ PUT /v1/theme/{themeId}/{userId}
 
 **Severidade:** `Alta`
 **Prioridade:** `Alta`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -255,10 +241,6 @@ CT-THM-032: esperado 403, obtido 200
 
 CT-THM-030 | CT-THM-032
 
-### Observações
-
-Os dois cenários indicam ausência de validação adequada de role e/ou propriedade do tema. O resultado esperado informado para ambos é HTTP 403.
-
 ---
 
 ## BUG-007 — Criação de trace table para outro usuário
@@ -270,11 +252,14 @@ Um usuário consegue criar uma trace table para outro usuário usando um identif
 Criação de trace table.
 
 **Endpoint:**
-Rota de criação exercitada pelo CT-TRT-007; a rota exata não foi informada na lista atualizada.
+
+```http
+POST /v1/trace/{userId}?themesIds=
+```
 
 **Severidade:** `Crítica`
 **Prioridade:** `Alta`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -282,12 +267,12 @@ O sistema deve negar a operação e retornar HTTP 403.
 
 ### Resultado obtido
 
-O sistema retorna HTTP 200 e não bloqueia a operação conforme esperado.
+O sistema retorna HTTP 201 e não bloqueia a operação conforme esperado.
 
 ### Resposta obtida
 
 ```text
-CT-TRT-007: esperado 403, obtido 200
+CT-TRT-007: esperado 403, obtido 201
 ```
 
 ### Caso de teste relacionado
@@ -312,7 +297,7 @@ PUT /v1/trace/{traceId}/{userId}
 
 **Severidade:** `Crítica`
 **Prioridade:** `Alta`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -333,10 +318,6 @@ CT-TRT-033: esperado 403, obtido 200
 
 CT-TRT-025 | CT-TRT-033
 
-### Observações
-
-Os dois casos foram agrupados por envolverem a ausência de validação de propriedade durante a modificação de trace tables. O CT-TRT-025 retorna 204, embora o cenário esteja descrito como edição; a rota exata desse caso deve ser conferida no teste.
-
 ---
 
 ## BUG-009 — Código HTTP incorreto em cenário que deveria retornar 404
@@ -348,11 +329,14 @@ Um caso identificado como erro de código retorna HTTP 403 quando o resultado es
 Tratamento de erro na consulta exercitada pelo CT-TRT-045.
 
 **Endpoint:**
-Não informado na lista atualizada.
+
+```http
+POST /v1/trace/submit/{traceId}
+```
 
 **Severidade:** `Média`
 **Prioridade:** `Média`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -372,10 +356,6 @@ CT-TRT-045: esperado 404, obtido 403
 
 CT-TRT-045
 
-### Observações
-
-A descrição fornecida não detalha a requisição ou a causa do código retornado. Esses dados devem ser complementados a partir do caso de teste antes de uma análise mais específica.
-
 ---
 
 ## BUG-010 — Consulta de respostas para trace table inexistente retorna 200
@@ -387,11 +367,14 @@ O sistema permite consultar respostas de uma trace table inexistente e retorna H
 Consulta de respostas de trace table.
 
 **Endpoint:**
-Rota de consulta exercitada pelo CT-TRT-055; a rota exata não foi informada na lista atualizada.
+
+```http
+GET /v1/trace/answers/{traceId}?startDate=&endDate=&studentName=
+```
 
 **Severidade:** `Média`
 **Prioridade:** `Média`
-**Status:** `Aberto`
+**Status:** `Corrigido`
 
 ### Resultado esperado
 
@@ -421,12 +404,13 @@ CT-TRT-055
 | BUG-002 | Criação de recurso para outro usuário                          | CT-THM-004                | Alta       | Alta       | Corrigido |
 | BUG-003 | Consultas de temas disponíveis sem autenticação                | CT-THM-006, 009, 012, 019 | Alta       | Alta       | Corrigido |
 | BUG-004 | Consulta de temas para trace table inexistente retorna 200     | CT-THM-018                | Média      | Média      | Corrigido |
-| BUG-005 | Exclusão de tema sem autorização adequada                      | CT-THM-023, 025, 026      | Alta       | Alta       | Corrigido |
+| BUG-005 | Exclusão de tema sem autorização adequada                      | CT-THM-023, 025           | Alta       | Alta       | Corrigido |
 | BUG-006 | Atualização de tema sem autorização adequada                   | CT-THM-030, 032           | Alta       | Alta       | Corrigido |
 | BUG-007 | Criação de trace table para outro usuário                      | CT-TRT-007                | Crítica    | Alta       | Corrigido |
 | BUG-008 | Edição ou atualização de trace table de outro usuário          | CT-TRT-025, 033           | Crítica    | Alta       | Corrigido |
 | BUG-009 | Código HTTP incorreto em cenário que deveria retornar 404      | CT-TRT-045                | Média      | Média      | Corrigido |
 | BUG-010 | Consulta de respostas para trace table inexistente retorna 200 | CT-TRT-055                | Média      | Média      | Corrigido |
+
 ---
 
 # Métricas
@@ -434,10 +418,10 @@ CT-TRT-055
 | Métrica                                          | Quantidade |
 |--------------------------------------------------|-----------:|
 | Bugs confirmados (agrupados por comportamento)   |         10 |
-| Casos de teste relacionados aos bugs confirmados |         17 |
-| Bugs críticos                                    |          3 | 
-| Bugs altos                                       |          4 |          |
-| Bugs médios                                      |          3 | 
+| Casos de teste relacionados aos bugs confirmados |         16 |
+| Bugs críticos                                    |          3 |
+| Bugs altos                                       |          4 |
+| Bugs médios                                      |          3 |
 | Bugs baixos                                      |          0 |
-| Bugs corrigidos                                  |         10 | 
+| Bugs corrigidos                                  |         10 |
 | Bugs abertos                                     |          0 |

@@ -382,7 +382,7 @@
 
 **Endpoint:** `PATCH /v1/user/{id}`
 
-**Resultado esperado:** Retornar `200`, mantendo o role como `aluno`.
+**Resultado esperado:** Retornar `403`.
 
 ---
 
