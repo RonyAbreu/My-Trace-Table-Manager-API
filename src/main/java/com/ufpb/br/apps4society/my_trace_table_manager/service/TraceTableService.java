@@ -1,84 +1,102 @@
 package com.ufpb.br.apps4society.my_trace_table_manager.service;
 
+import com.ufpb.br.apps4society.my_trace_table_manager.dto.metric.MetricsResponse;
+import com.ufpb.br.apps4society.my_trace_table_manager.dto.answer.AnswerResponse;
+import com.ufpb.br.apps4society.my_trace_table_manager.dto.tracetable.CellErrorResponse;
 import com.ufpb.br.apps4society.my_trace_table_manager.dto.tracetable.TraceTableRequest;
 import com.ufpb.br.apps4society.my_trace_table_manager.dto.tracetable.TraceTableResponse;
-import com.ufpb.br.apps4society.my_trace_table_manager.entity.Theme;
-import com.ufpb.br.apps4society.my_trace_table_manager.entity.TraceTable;
-import com.ufpb.br.apps4society.my_trace_table_manager.entity.User;
+import com.ufpb.br.apps4society.my_trace_table_manager.entity.*;
+import com.ufpb.br.apps4society.my_trace_table_manager.repository.AnswerRepository;
 import com.ufpb.br.apps4society.my_trace_table_manager.repository.ThemeRepository;
 import com.ufpb.br.apps4society.my_trace_table_manager.repository.TraceTableRepository;
 import com.ufpb.br.apps4society.my_trace_table_manager.repository.UserRepository;
 import com.ufpb.br.apps4society.my_trace_table_manager.service.exception.*;
+import com.ufpb.br.apps4society.my_trace_table_manager.service.validation.CellTypeValidator;
+import com.ufpb.br.apps4society.my_trace_table_manager.service.validation.CellTypeValidatorFactory;
 import com.ufpb.br.apps4society.my_trace_table_manager.util.TableSerializationUtil;
-import org.springframework.beans.factory.annotation.Value;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
 public class TraceTableService {
+    private static final Logger logger = LoggerFactory.getLogger(MinioService.class);
+
     private final TraceTableRepository traceTableRepository;
     private final UserRepository userRepository;
     private final ThemeRepository themeRepository;
-    @Value("${app.img-directory}")
-    private String imageDirectory;
+    private final MinioService minioService;
+    private final AnswerRepository answerRepository;
 
-    public TraceTableService(TraceTableRepository traceTableRepository, UserRepository userRepository, ThemeRepository themeRepository) {
+    public TraceTableService(TraceTableRepository traceTableRepository, UserRepository userRepository,
+                             ThemeRepository themeRepository, MinioService minioService, AnswerRepository answerRepository) {
         this.traceTableRepository = traceTableRepository;
         this.userRepository = userRepository;
         this.themeRepository = themeRepository;
+        this.minioService = minioService;
+        this.answerRepository = answerRepository;
     }
 
     public TraceTableResponse insertTraceTable(
             TraceTableRequest traceTableRequest,
             MultipartFile image,
             Long userId,
-            Long themeId) throws IOException {
+            List<Long> themesIds,
+            User loggedUser
+    ) throws UserNotHavePermissionException {
 
         validateTraceTableRequest(traceTableRequest);
 
         User creator = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
-        Theme theme = themeRepository.findById(themeId)
-                .orElseThrow(() -> new ThemeNotFoundException("Tema não encontrado"));
+        List<Theme> themes = themeRepository.findAllById(themesIds);
+        if (themes.isEmpty()) {
+            throw new ThemeNotFoundException("Nenhum tema encontrado para os IDs fornecidos");
+        }
 
-        String imgPath = handleImageUpload(image);
+        if (!userId.equals(loggedUser.getId())) {
+            throw new UserNotHavePermissionException("Não é possível criar um tema para outro usuário");
+        }
 
-        TraceTable traceTable = new TraceTable(traceTableRequest, creator, theme);
-        traceTable.setImgPath(imgPath);
-        theme.addTraceTable(traceTable);
+        String imgName = handleImageUpload(image);
+
+        TraceTable traceTable = new TraceTable(traceTableRequest, creator, themes);
+        traceTable.setImgName(imgName);
 
         traceTableRepository.save(traceTable);
-        themeRepository.save(theme);
 
-        return traceTable.entityToResponse();
+        return traceTable.entityToResponse(minioService);
     }
 
-    private String handleImageUpload(MultipartFile image) throws IOException {
+    private String handleImageUpload(MultipartFile image) {
         if (image == null || image.isEmpty()) {
             throw new TraceTableException("Imagem inválida ou vazia");
         }
 
-        File dir = new File(imageDirectory);
-        if (!dir.exists()) {
-            dir.mkdirs();
+        try {
+            return minioService.uploadFile(image);
+        } catch (Exception e) {
+            throw new TraceTableException("Erro ao salvar a imagem do exercício");
         }
-
-        String fileName = System.currentTimeMillis() + image.getOriginalFilename();
-
-        File destination = new File(imageDirectory + fileName);
-
-        image.transferTo(destination);
-
-        return "/assets/" + fileName;
     }
 
-
+    public TraceTableResponse findById(Long id) {
+        TraceTable traceTable = traceTableRepository.findById(id)
+                .orElseThrow(() -> new TraceNotFoundException("Exercício não encontrado"));
+        
+        return traceTable.entityToResponse(minioService);
+    }
 
     public Page<TraceTableResponse> findAllByUser(Pageable pageable, Long userId) {
         User user = userRepository.findById(userId)
@@ -86,74 +104,237 @@ public class TraceTableService {
 
         Page<TraceTable> traceTables = traceTableRepository.findByCreator(pageable, user);
 
-        return traceTables.map(TraceTable::entityToResponse);
+        return traceTables.map(traceTable -> traceTable.entityToResponse(minioService));
     }
 
     public Page<TraceTableResponse> findAllByTheme(Pageable pageable, Long themeId) {
         themeRepository.findById(themeId)
-                .orElseThrow(() -> new UserNotFoundException("Tema não encontrado"));
+                .orElseThrow(() -> new ThemeNotFoundException("Tema não encontrado"));
 
-        Page<TraceTable> traceTables = traceTableRepository.findByThemeId(pageable, themeId);
+        Page<TraceTable> traceTables = traceTableRepository.findByThemes_Id(pageable, themeId);
 
-        return traceTables.map(TraceTable::entityToResponse);
+        return traceTables.map(traceTable -> traceTable.entityToResponse(minioService));
     }
 
-    public void removeTraceTable(Long userId, Long traceId) throws UserNotHavePermissionException {
+    public Page<TraceTableResponse> findAllByThemeName(Pageable pageable, String themeName, Long userId) {
+        themeRepository.findByNameEqualsIgnoreCase(themeName)
+                .orElseThrow(() -> new ThemeNotFoundException("Tema não encontrado"));
+
+        Page<TraceTable> traceTables = traceTableRepository.findByThemes_NameIgnoreCaseAndCreator_Id(pageable, themeName, userId);
+
+        return traceTables.map(traceTable -> traceTable.entityToResponse(minioService));
+    }
+
+    @Transactional
+    public void removeTraceTable(Long userId, Long traceId, User loggedUser) throws UserNotHavePermissionException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
         TraceTable traceTable = traceTableRepository.findById(traceId)
                 .orElseThrow(() -> new TraceNotFoundException("Exercício não encontrado"));
 
-        if (user.userNotHavePermission(traceTable.getCreator())) {
+        if (loggedUser.userHavePermission(traceTable.getCreator())) {
             throw new UserNotHavePermissionException("Você não tem permissão de remover este exercício!");
         }
 
+        try {
+            minioService.deleteObject(traceTable.getImgName());
+        } catch (Exception e) {
+            logger.warn("Erro ao excluir imagem do MinIO. Prosseguindo com exclusão da TraceTable. Erro: {}",
+                    e.getMessage());
+        }
+
+        answerRepository.deleteByTraceTableId(traceId);
         traceTableRepository.delete(traceTable);
     }
 
-    public TraceTableResponse updateTraceTable(TraceTableRequest newTraceTable,  Long traceId, Long userId) throws UserNotHavePermissionException {
+    public TraceTableResponse updateTraceTable(TraceTableRequest newTraceTable, Long traceId, Long userId,
+            List<Long> themesIds, User loggedUser)
+            throws UserNotHavePermissionException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
         TraceTable traceTable = traceTableRepository.findById(traceId)
                 .orElseThrow(() -> new TraceNotFoundException("Exercício não encontrado"));
 
-        if (user.userNotHavePermission(traceTable.getCreator())) {
+        if (loggedUser.userHavePermission(traceTable.getCreator())) {
             throw new UserNotHavePermissionException("Você não tem permissão de remover este exercício!");
         }
 
-        updateData(newTraceTable, traceTable);
+        List<Theme> newThemes = themeRepository.findAllById(themesIds);
+        if (newThemes.isEmpty() && !themesIds.isEmpty()) {
+            throw new ThemeNotFoundException("Nenhum tema encontrado para os IDs fornecidos");
+        }
+
+        updateData(newTraceTable, traceTable, newThemes);
 
         traceTableRepository.save(traceTable);
 
-        return traceTable.entityToResponse();
+        return traceTable.entityToResponse(minioService);
     }
 
-    private void updateData(TraceTableRequest newTraceTable, TraceTable traceTable) {
+    private void updateData(TraceTableRequest newTraceTable, TraceTable traceTable, List<Theme> newThemes) {
         traceTable.setExerciseName(newTraceTable.exerciseName());
+        traceTable.setProgrammingLanguage(newTraceTable.programmingLanguage());
         traceTable.setHeader(TableSerializationUtil.serializeHeader(newTraceTable.header()));
         traceTable.setShownTraceTable(TableSerializationUtil.serializeTable(newTraceTable.shownTraceTable()));
         traceTable.setExpectedTraceTable(TableSerializationUtil.serializeTable(newTraceTable.expectedTraceTable()));
+        traceTable.setTypeTable(TableSerializationUtil.serializeTable(newTraceTable.typeTable()));
+        traceTable.setThemes(newThemes);
+    }
+
+    public void checkUserAnswer(List<List<String>> userTraceTable, Long traceId) {
+        TraceTable traceTable = traceTableRepository.findById(traceId)
+                .orElseThrow(() -> new TraceNotFoundException("Exercício não encontrado"));
+
+        List<List<String>> expectedTraceTable = TableSerializationUtil
+                .deserializeTable(traceTable.getExpectedTraceTable());
+        List<List<String>> typeTable = TableSerializationUtil
+                .deserializeTable(traceTable.getTypeTable());
+
+        List<CellErrorResponse> errors = new ArrayList<>();
+
+        for (int i = 0; i < userTraceTable.size(); i++) {
+            for (int j = 0; j < userTraceTable.get(i).size(); j++) {
+                String userValue = userTraceTable.get(i).get(j);
+                String expectedValue = expectedTraceTable.get(i).get(j);
+                String cellType = typeTable.get(i).get(j);
+
+                if ("#".equals(expectedValue))
+                    continue;
+
+                CellTypeValidator validator;
+                try {
+                    validator = CellTypeValidatorFactory.getValidator(cellType);
+                } catch (IllegalArgumentException e) {
+                    throw new TraceTableException("Tipo desconhecido na célula [" + (i + 1) + "][" + (j + 1) + "]");
+                }
+
+                if (!validator.isValid(userValue)) {
+                    errors.add(new CellErrorResponse(i, j, "Tipo inválido"));
+                } else if (!userValue.equals(expectedValue)) {
+                    errors.add(new CellErrorResponse(i, j, "Valor incorreto"));
+                }
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new TraceTableDetailedException("Célula(s) com erro(s)!", errors);
+        }
     }
 
     private void validateTraceTableRequest(TraceTableRequest traceTable) {
         if (Objects.isNull(traceTable.exerciseName()) || traceTable.exerciseName().isBlank()) {
             throw new IllegalArgumentException("Campo exerciseName não pode ser vazio ou nulo");
         }
-        if (traceTable.exerciseName().length() < 3 || traceTable.exerciseName().length() > 30) {
+        if (traceTable.exerciseName().length() < 1 || traceTable.exerciseName().length() > 30) {
             throw new IllegalArgumentException("Campo exerciseName deve ter entre 3 e 30 caracteres");
         }
         if (Objects.isNull(traceTable.header()) || traceTable.header().isEmpty()) {
-            throw new IllegalArgumentException("O campo header não pode ser nulo");
+            throw new IllegalArgumentException("O campo header não pode ser vazio ou nulo");
         }
 
         if (Objects.isNull(traceTable.shownTraceTable()) || traceTable.shownTraceTable().isEmpty()) {
-            throw new IllegalArgumentException("O campo shownTraceTable não pode ser nulo");
+            throw new IllegalArgumentException("O campo shownTraceTable não pode ser vazio ou nulo");
         }
 
         if (Objects.isNull(traceTable.expectedTraceTable()) || traceTable.expectedTraceTable().isEmpty()) {
-            throw new IllegalArgumentException("O campo expectedTraceTable não pode ser nulo");
+            throw new IllegalArgumentException("O campo expectedTraceTable não pode ser vazio ou nulo");
         }
+
+        if (Objects.isNull(traceTable.typeTable()) || traceTable.typeTable().isEmpty()) {
+            throw new IllegalArgumentException("O campo typeTable não pode ser vazio ou nulo");
+        }
+
+        if (Objects.isNull(traceTable.programmingLanguage()) || traceTable.programmingLanguage().isBlank()) {
+            throw new IllegalArgumentException("O campo programmingLanguage não pode ser vazio ou nulo");
+        }
+    }
+
+    public void submitAnswer(List<List<String>> userTraceTable, Long traceId, Long userId) {
+        User student = userRepository.findById(userId).orElseThrow();
+
+        if (traceTableRepository.findById(traceId).isEmpty()) {
+            throw new TraceNotFoundException("Trace Table inexistente para esse id.");
+        }
+        TraceTable traceTable = traceTableRepository.findById(traceId).get();
+
+        Answer answer = new Answer();
+        answer.setStudent(student);
+        answer.setTraceTable(traceTable);
+        answer.setAnswerData(TableSerializationUtil.serializeTable(userTraceTable));
+        answer.setCreatedAt(LocalDateTime.now().minusHours(3));
+
+        answerRepository.save(answer);
+    }
+
+    public List<AnswerResponse> getAnswersByExercise(
+            Long traceId,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            String studentName
+    ) {
+        List<Answer> answers;
+
+        if (traceTableRepository.findById(traceId).isEmpty()) {
+            throw new TraceNotFoundException("Trace Table inexistente para esse id.");
+        }
+
+        if (startDate != null && endDate != null && studentName != null && !studentName.isEmpty()) {
+            answers = answerRepository.findByTraceTableIdAndCreatedAtBetweenAndStudentNameIgnoreCase(traceId, startDate, endDate, studentName);
+        } else if (startDate != null && endDate != null) {
+            answers = answerRepository.findByTraceTableIdAndCreatedAtBetween(traceId, startDate, endDate);
+        } else if (studentName != null && !studentName.isEmpty()) {
+            answers = answerRepository.findByStudentNameIgnoreCase(studentName);
+        }else {
+            answers = answerRepository.findByTraceTableId(traceId);
+        }
+
+        return answers.stream().map(a -> new AnswerResponse(
+                a.getId(),
+                a.getStudent().getName(),
+                a.getTraceTable().getExerciseName(),
+                TableSerializationUtil.deserializeTable(a.getAnswerData()),
+                a.getCreatedAt().toString()
+        )).toList();
+    }
+
+    public MetricsResponse getMetricsByExercise(
+            Long traceId,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            String studentName
+    ) {
+        List<Answer> answers;
+
+        if (startDate != null && endDate != null && studentName != null && !studentName.isEmpty()) {
+            answers = answerRepository.findByTraceTableIdAndCreatedAtBetweenAndStudentNameIgnoreCase(traceId, startDate, endDate, studentName);
+        } else if (startDate != null && endDate != null) {
+            answers = answerRepository.findByTraceTableIdAndCreatedAtBetween(traceId, startDate, endDate);
+        } else if (studentName != null && !studentName.isEmpty()) {
+            answers = answerRepository.findByStudentNameIgnoreCase(studentName);
+        }else {
+            answers = answerRepository.findByTraceTableId(traceId);
+        }
+
+        int totalSubmissions = answers.size();
+        int correctSubmissions = (int) answers.stream()
+                .filter(a -> {
+                    try {
+                        checkUserAnswer(TableSerializationUtil.deserializeTable(a.getAnswerData()), traceId);
+                        return true;
+                    } catch (TraceTableDetailedException e) {
+                        return false;
+                    }
+                })
+                .count();
+
+        int incorrectSubmissions = totalSubmissions - correctSubmissions;
+
+        double accuracy = totalSubmissions > 0 ? (double) correctSubmissions / totalSubmissions * 100 : 0.0;
+
+        double errorRate = totalSubmissions >0 ? (double) incorrectSubmissions / totalSubmissions * 100 : 0.0;
+
+        return new MetricsResponse(totalSubmissions, correctSubmissions, incorrectSubmissions, accuracy, errorRate);
     }
 }

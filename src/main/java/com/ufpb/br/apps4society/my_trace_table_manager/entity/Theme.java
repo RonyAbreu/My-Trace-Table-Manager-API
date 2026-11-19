@@ -20,10 +20,10 @@ public class Theme implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private User creator;
 
-    @OneToMany(mappedBy = "theme", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "themes")
     private List<TraceTable> traceTables = new ArrayList<>();
 
     public Theme(ThemeRequest themeRequest, User creator) {

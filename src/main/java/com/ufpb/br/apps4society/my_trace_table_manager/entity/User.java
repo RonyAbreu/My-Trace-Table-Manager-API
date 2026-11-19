@@ -34,20 +34,26 @@ public class User implements Serializable, UserDetails {
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "creator")
     List<Theme> themes = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "creator")
+    @OneToMany(mappedBy = "creator")
     List<TraceTable> traceTables = new ArrayList<>();
 
     public User(UserRequest userRequest) {
         this.name = userRequest.name();
         this.email = userRequest.email();
         this.password = userRequest.password();
-        this.role = Role.USER;
+        this.role = userRequest.role();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role == Role.USER) return List.of(new SimpleGrantedAuthority("USER"));
-        else return List.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("ADMIN"));
+        if (role == Role.ADMIN) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_USER"),
+                    new SimpleGrantedAuthority("ROLE_ADMIN")
+            );
+        }
+
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -89,10 +95,10 @@ public class User implements Serializable, UserDetails {
     }
 
     public UserResponse entityToResponse(){
-        return new UserResponse(id,name,email);
+        return new UserResponse(id,name,email,role.getRole());
     }
 
-    public boolean userNotHavePermission(User user){
-        return !this.equals(user) && this.getRole() == Role.USER;
+    public boolean userHavePermission(User user){
+        return !(this.equals(user) || this.getRole() == Role.ADMIN);
     }
 }

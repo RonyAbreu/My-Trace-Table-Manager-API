@@ -8,5 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TraceTableRepository extends JpaRepository<TraceTable, Long> {
     Page<TraceTable> findByCreator(Pageable pageable, User creator);
-    Page<TraceTable> findByThemeId(Pageable pageable, Long themeId);
+    Page<TraceTable> findByThemes_Id(Pageable pageable, Long themeId);
+
+    Page<TraceTable> findByThemes_NameIgnoreCaseAndCreator_Id(Pageable pageable, String themeName, Long creatorId);
 }
